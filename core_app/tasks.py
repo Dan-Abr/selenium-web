@@ -1,5 +1,5 @@
 from celery import Celery, shared_task
-from crawlers import crawl_website
+from .crawlers import crawl_website
 
 app = Celery("tasks", broker="redis://localhost/", backend="redis://localhost/")
 
@@ -9,5 +9,6 @@ def add(x, y):
 
 @shared_task
 def crawl_google():
-    crawl_website("https://google.com")
+    find_element_class = "//div[@class='A8SBwf']"
+    crawl_website("https://google.com", find_element_class)
     return

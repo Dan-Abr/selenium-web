@@ -71,7 +71,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "selenium_web.wsgi.application"
 
-#CELERY_BROKER_URL = "redis://localhost:6379/"
+CELERY_BROKER_URL = "redis://localhost:6379/"
 
 # CELERY_BEAT_SCHEDULE = {
 #     "TaskName": {

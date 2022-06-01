@@ -5,7 +5,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
-def crawl_website(url):
+from .models import DOMElement
+
+def crawl_website(url, find_element_class):
     options = webdriver.ChromeOptions()
     options.add_argument(" - incognito ")
 
@@ -17,12 +19,19 @@ def crawl_website(url):
     try:
         WebDriverWait(browser, timeout).until(
             EC.visibility_of_element_located(
-                (By.XPATH, "//div[@class='A8SBwf']"),
+                (By.XPATH, find_element_class),
             )
         )
     except TimeoutException:
         print("waiting to load")
         browser.quit()
 
-    elements = browser.find_elements_by_xpath("//div[@class='A8SBwf']")
+    elements = browser.find_elements_by_xpath(find_element_class)
     print(elements)
+
+    # Store crawled data in the database
+    # DOMElement.objects.create(
+    #     source=url,
+    #     link=url,
+    #     title="title",
+    # )
