@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from django.views import generic
+from .models import DOMElement
 
-# Create your views here.
+class DOMElementListView(generic.ListView):
+    model = DOMElement
+    template_name = "dom_elements_list.html"
+
+
