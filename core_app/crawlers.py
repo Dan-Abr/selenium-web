@@ -29,17 +29,17 @@ def crawl_website(url, find_element_class):
         # Store crawled data in the database
         CrawlerResults.objects.create(
             link=url,
-            title="title",
+            page_title="title",
             status="Success",
         )
-        
+
     except TimeoutException:
         print("waiting to load")
         browser.quit()
 
         CrawlerResults.objects.create(
             link=url,
-            title="title",
+            page_title="title",
             status="Failed",
         )
 

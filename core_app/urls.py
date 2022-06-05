@@ -12,9 +12,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path("blog/", include("blog.urls"))
 """
+
 from django.urls import include, path
-from .views import DOMElementListView
+from .views import CrawlerResultsListView
 
 urlpatterns = [
-    path("", DOMElementListView.as_view(), name="dom-elements-list"),
+    path("", CrawlerResultsListView.as_view(), name="crawler-results-list"),
 ]

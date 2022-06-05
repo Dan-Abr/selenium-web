@@ -7,7 +7,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "selenium_web.settings")
 
 app = Celery("selenium_web")
 
-# Using a string here means the worker doesn"t have to serialize
+# Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.
 # - namespace="CELERY" means all celery-related configuration keys
 #   should have a `CELERY_` prefix.
