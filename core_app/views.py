@@ -1,8 +1,8 @@
 from django.views import generic
-from .models import CrawlerTask
+from .models import CrawlerResults
 
 class DOMElementListView(generic.ListView):
-    model = CrawlerTask
+    model = CrawlerResults
     template_name = "dom_elements_list.html"
 
 

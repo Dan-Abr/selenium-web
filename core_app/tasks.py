@@ -9,8 +9,8 @@ app = Celery("tasks", broker="redis://localhost/", backend="redis://localhost/")
 def add(x, y):
     return x+y
 
+find_element_class = "//div[@class='A8SBwf']"
 @shared_task
-def crawl_google():
-    find_element_class = "//div[@class='A8SBwf']"
-    crawl_website("https://google.com", find_element_class)
+def call_crawl_website(url="", css_selector=find_element_class):
+    crawl_website(url, css_selector)
     return
