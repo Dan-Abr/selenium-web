@@ -2,6 +2,8 @@ from celery import Celery, shared_task
 from .crawlers import crawl_website
 
 app = Celery("tasks", broker="redis://localhost/", backend="redis://localhost/")
+# celery -A selenium_web beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+# celery -A selenium_web beat --loglevel=info
 
 @shared_task
 def add(x, y):

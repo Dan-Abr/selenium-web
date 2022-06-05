@@ -1,10 +1,10 @@
 from django.db import models
 
 # Create your models here.
-class DOMElement(models.Model):
-    source = models.CharField(max_length=100)
+class CrawlerTask(models.Model):
     link = models.TextField()
     title = models.CharField(max_length=200)
+    
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

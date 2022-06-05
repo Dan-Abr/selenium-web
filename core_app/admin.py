@@ -1,4 +1,14 @@
 from django.contrib import admin
-from .models import DOMElement
+from .models import CrawlerTask
 
-admin.site.register(DOMElement)
+
+class DOMElementAdmin(admin.ModelAdmin):
+    list_display = [
+        'source',
+        'link',
+        'title',
+        'created',
+        'updated'
+    ]
+
+admin.site.register(CrawlerTask, DOMElementAdmin)

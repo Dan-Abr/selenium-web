@@ -5,7 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
-from .models import DOMElement
+from .models import CrawlerTask
 
 def crawl_website(url, find_element_class):
     options = webdriver.ChromeOptions()
@@ -22,16 +22,16 @@ def crawl_website(url, find_element_class):
                 (By.XPATH, find_element_class),
             )
         )
+
+        elements = browser.find_elements_by_xpath(find_element_class)
+        print(elements)
+
+        # Store crawled data in the database
+        CrawlerTask.objects.create(
+            link=url,
+            title="title",
+        )
     except TimeoutException:
         print("waiting to load")
         browser.quit()
 
-    elements = browser.find_elements_by_xpath(find_element_class)
-    print(elements)
-
-    # Store crawled data in the database
-    # DOMElement.objects.create(
-    #     source=url,
-    #     link=url,
-    #     title="title",
-    # )

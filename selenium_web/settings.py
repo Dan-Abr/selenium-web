@@ -75,8 +75,8 @@ CELERY_BROKER_URL = "redis://localhost:6379/"
 
 # CELERY_BEAT_SCHEDULE = {
 #     "TaskName": {
-#         "task": "core_app.tasks.crawl_test()",
-#         "schedule": 10
+#         "task": "core_app.tasks.crawl_google",
+#         "schedule": 2
 #     }
 # }
 
