@@ -1,20 +1,22 @@
 from django.contrib import admin
-from .models import CrawlerResults, CrawlerParams
+from .models import TestResults, TestParams
 
 
-class CrawlerResultsAdmin(admin.ModelAdmin):
+class TestResultsAdmin(admin.ModelAdmin):
     list_display = [
         'link',
         'page_title',
         'status',
         'created',
-        'updated'
+        'updated',
     ]
 
-class CrawlerParamsAdmin(admin.ModelAdmin):
+class TestParamsAdmin(admin.ModelAdmin):
     list_display = [
         'link',
+        'created',
+        'updated',
     ]
 
-admin.site.register(CrawlerResults, CrawlerResultsAdmin)
-admin.site.register(CrawlerParams, CrawlerParamsAdmin)
+admin.site.register(TestResults, TestResultsAdmin)
+admin.site.register(TestParams, TestParamsAdmin)

@@ -3,10 +3,15 @@ from .models import *
 #from django.contrib.auth.models import User
 
 
-class CrawlerParamsForm(forms.ModelForm):
+class TestParamsForm(forms.ModelForm):
     class Meta:
-        model = CrawlerParams
+        model = TestParams
         fields = ['link',]
+
+        # Style with Bootstrap
+        widgets = {
+            'link': forms.TextInput(attrs={'class': 'form-control'}),
+        }
 
 
 # class UserForm(forms.ModelForm):

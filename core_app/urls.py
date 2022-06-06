@@ -14,8 +14,9 @@ Including another URLconf
 """
 
 from django.urls import include, path
-from .views import CrawlerResultsListView
+from .views import TestResultsListView, AddTest
 
 urlpatterns = [
-    path("", CrawlerResultsListView.as_view(), name="crawler-results-list"),
+    path("", TestResultsListView.as_view(), name="test-results-list"),
+    path("add-test/", AddTest.as_view(), name="add-test"),
 ]

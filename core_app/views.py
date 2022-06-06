@@ -1,11 +1,58 @@
-from django.views import generic
-from .models import CrawlerResults
+from django.shortcuts import redirect, render
+from django.views import View, generic
 
-CRAWLER_RESULTS_TEMPLATE = 'layout/crawler_results_list.html'
+from .forms import TestParamsForm
+from .models import TestParams, TestResults
 
-class CrawlerResultsListView(generic.ListView):
-    model = CrawlerResults
-    template_name = CRAWLER_RESULTS_TEMPLATE
+TEST_RESULTS_TEMPLATE = 'pages/test_results_list.html'
+ADD_TEST_TEMPLATE = 'pages/add-test.html'
+
+class TestResultsListView(generic.ListView):
+    """_summary_
+
+    Args:
+        View (_type_): _description_
+    """
+    model = TestResults
+    template_name = TEST_RESULTS_TEMPLATE
     paginate_by = 10
 
 
+class AddTest(View):
+    """Render scheduled tests and allow adding new tests.
+    The class has two methods:
+    GET - get all scheduled tests.
+    POST - let the user add new tests.
+    """
+
+    def get(self, request, *args, **kwargs):
+        # Show all scheduled tests
+        scheduled_tests = TestParams.objects.filter().order_by('-created')
+        add_test_form = TestParamsForm
+
+        context = {
+            'scheduled tests': scheduled_tests,
+            'add_test_form': add_test_form,
+        }
+        return render(request, ADD_TEST_TEMPLATE, context)
+
+    def post(self, request, *args, **kwargs):
+        add_test_form = TestParamsForm(request.POST)
+
+        # POST to database
+        if add_test_form.is_valid():
+            new_test_job = add_test_form.save(commit=False)
+            new_test_job.save()
+
+        
+        # Reload the page with the newest data.
+        # Show all scheduled tests
+        scheduled_tests = TestParams.objects.filter().order_by('-created_on')
+        add_test_form = TestParamsForm
+
+        context = {
+            'scheduled tests': scheduled_tests,
+            'add_test_form': add_test_form,
+        }
+
+        return render(request, ADD_TEST_TEMPLATE, context)

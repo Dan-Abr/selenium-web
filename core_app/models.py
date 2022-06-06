@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-class CrawlerResults(models.Model):
+class TestResults(models.Model):
     link = models.TextField()
     page_title = models.CharField(max_length=200)
     status = models.CharField(max_length=10)
@@ -13,8 +13,10 @@ class CrawlerResults(models.Model):
         return self.link[:20]
 
 
-class CrawlerParams(models.Model):
+class TestParams(models.Model):
     link = models.TextField()
 
     # ... list_of actions = [] ?
-    pass
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
