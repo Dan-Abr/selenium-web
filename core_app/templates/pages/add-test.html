@@ -14,6 +14,7 @@
     </form>
 
     <!-- Display all the results after crawling -->
+    <div class="mt-5">Total tests: {{ scheduled_tests.count }}</div>
     <table class="table">
         <thead>
             <tr>
@@ -31,9 +32,9 @@
                 <td>
                     <p>{{ item.link }}</p>
                 </td>
-                {% comment %} <td>{{ item.page_title }}</td>
-                <td>{{ item.status }}</td>
-                <td>{{ item.created }}</td> {% endcomment %}
+                <td>{{ item.id }}</td>
+                <td>{{ item.id }}</td>
+                <td>{{ item.id }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -55,5 +56,6 @@
         </ul>
     </nav>
     {% endif %}
+
 </div>
 {% endblock content %}
