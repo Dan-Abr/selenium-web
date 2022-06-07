@@ -5,7 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
-from .models import TestResults
+from .models import E2ETestResults
 
 def crawl_website(url, find_element_class):
     options = webdriver.ChromeOptions()
@@ -27,7 +27,7 @@ def crawl_website(url, find_element_class):
         print(elements)
 
         # Store crawled data in the database
-        TestResults.objects.create(
+        E2ETestResults.objects.create(
             link=url,
             page_title="title",
             status="Success",
@@ -37,7 +37,7 @@ def crawl_website(url, find_element_class):
         print("waiting to load")
         browser.quit()
 
-        TestResults.objects.create(
+        E2ETestResults.objects.create(
             link=url,
             page_title="title",
             status="Failed",

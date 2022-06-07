@@ -14,9 +14,9 @@ Including another URLconf
 """
 
 from django.urls import include, path
-from .views import TestResultsListView, AddTest
+from .views import E2ETestResultsListView, AddE2ETest
 
 urlpatterns = [
-    path("", TestResultsListView.as_view(), name="test-results-list"),
-    path("add-test/", AddTest.as_view(), name="add-test"),
+    path("", E2ETestResultsListView.as_view(), name="test-results-list"),
+    path("add-test/", AddE2ETest.as_view(), name="add-test"),
 ]

@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-class TestResults(models.Model):
+class E2ETestResults(models.Model):
     link = models.TextField()
     page_title = models.CharField(max_length=200)
     status = models.CharField(max_length=10)
@@ -13,7 +13,7 @@ class TestResults(models.Model):
         return self.link[:20]
 
 
-class TestParams(models.Model):
+class E2ETestParams(models.Model):
     link = models.TextField()
 
     # ... list_of actions = [] ?

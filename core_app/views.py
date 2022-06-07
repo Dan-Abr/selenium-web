@@ -1,24 +1,24 @@
 from django.shortcuts import redirect, render
 from django.views import View, generic
 
-from .forms import TestParamsForm
-from .models import TestParams, TestResults
+from .forms import E2ETestParamsForm
+from .models import E2ETestParams, E2ETestResults
 
 TEST_RESULTS_TEMPLATE = 'pages/test_results_list.html'
 ADD_TEST_TEMPLATE = 'pages/add-test.html'
 
-class TestResultsListView(generic.ListView):
+class E2ETestResultsListView(generic.ListView):
     """_summary_
 
     Args:
         View (_type_): _description_
     """
-    model = TestResults
+    model = E2ETestResults
     template_name = TEST_RESULTS_TEMPLATE
     paginate_by = 10
 
 
-class AddTest(View):
+class AddE2ETest(View):
     """Render scheduled tests and allow adding new tests.
     The class has two methods:
     GET - get all scheduled tests.
@@ -27,8 +27,8 @@ class AddTest(View):
 
     def get(self, request, *args, **kwargs):
         # Show all scheduled tests
-        scheduled_tests = TestParams.objects.filter().order_by('-created')
-        add_test_form = TestParamsForm
+        scheduled_tests = E2ETestParams.objects.filter().order_by('-created')
+        add_test_form = E2ETestParamsForm
 
         context = {
             'scheduled tests': scheduled_tests,
@@ -37,7 +37,7 @@ class AddTest(View):
         return render(request, ADD_TEST_TEMPLATE, context)
 
     def post(self, request, *args, **kwargs):
-        add_test_form = TestParamsForm(request.POST)
+        add_test_form = E2ETestParamsForm(request.POST)
 
         # POST to database
         if add_test_form.is_valid():
@@ -47,8 +47,8 @@ class AddTest(View):
         
         # Reload the page with the newest data.
         # Show all scheduled tests
-        scheduled_tests = TestParams.objects.filter().order_by('-created_on')
-        add_test_form = TestParamsForm
+        scheduled_tests = E2ETestParams.objects.filter().order_by('-created')
+        add_test_form = E2ETestParamsForm
 
         context = {
             'scheduled tests': scheduled_tests,

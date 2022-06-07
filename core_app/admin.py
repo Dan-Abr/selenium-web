@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import TestResults, TestParams
+from .models import E2ETestResults, E2ETestParams
 
 
-class TestResultsAdmin(admin.ModelAdmin):
+class E2ETestResultsAdmin(admin.ModelAdmin):
     list_display = [
         'link',
         'page_title',
@@ -11,12 +11,12 @@ class TestResultsAdmin(admin.ModelAdmin):
         'updated',
     ]
 
-class TestParamsAdmin(admin.ModelAdmin):
+class E2ETestParamsAdmin(admin.ModelAdmin):
     list_display = [
         'link',
         'created',
         'updated',
     ]
 
-admin.site.register(TestResults, TestResultsAdmin)
-admin.site.register(TestParams, TestParamsAdmin)
+admin.site.register(E2ETestResults, E2ETestResultsAdmin)
+admin.site.register(E2ETestParams, E2ETestParamsAdmin)

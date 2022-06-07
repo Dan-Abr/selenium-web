@@ -3,9 +3,9 @@ from .models import *
 #from django.contrib.auth.models import User
 
 
-class TestParamsForm(forms.ModelForm):
+class E2ETestParamsForm(forms.ModelForm):
     class Meta:
-        model = TestParams
+        model = E2ETestParams
         fields = ['link',]
 
         # Style with Bootstrap

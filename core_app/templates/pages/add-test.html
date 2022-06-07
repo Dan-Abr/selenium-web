@@ -25,15 +25,15 @@
             </tr>
         </thead>
         <tbody>
-            {% for item in object_list %}
+            {% for item in scheduled_tests %}
             <tr>
                 <th scope="row">{{ item.id }}</th>
                 <td>
                     <p>{{ item.link }}</p>
                 </td>
-                <td>{{ item.page_title }}</td>
+                {% comment %} <td>{{ item.page_title }}</td>
                 <td>{{ item.status }}</td>
-                <td>{{ item.created }}</td>
+                <td>{{ item.created }}</td> {% endcomment %}
             </tr>
             {% endfor %}
         </tbody>
