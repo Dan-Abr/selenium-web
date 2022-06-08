@@ -8,9 +8,9 @@
         
         <div class="form-group">
             {{ add_test_form.as_p }}
-            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+            <small id="emailHelp" class="form-text text-muted">Some text.</small>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Add</button>
     </form>
 
     <!-- Display all the results after crawling -->
@@ -23,6 +23,7 @@
                 <th scope="col">Page Title</th>
                 <th scope="col">Status</th>
                 <th scope="col">Time</th>
+                <th scope="col">Edit</th>
             </tr>
         </thead>
         <tbody>
@@ -35,6 +36,7 @@
                 <td>{{ item.id }}</td>
                 <td>{{ item.id }}</td>
                 <td>{{ item.id }}</td>
+                <td><a class="page-link" href="{% url 'edit-e2e-test' item.id %}">Edit</a></td>
             </tr>
             {% endfor %}
         </tbody>

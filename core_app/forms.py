@@ -12,6 +12,8 @@ class E2ETestParamsForm(forms.ModelForm):
         widgets = {
             'link': forms.TextInput(attrs={'class': 'form-control'}),
         }
+        # Should not allow to edit fields:
+        exclude = ['pk']  
 
 
 # class UserForm(forms.ModelForm):

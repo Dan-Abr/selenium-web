@@ -14,9 +14,10 @@ Including another URLconf
 """
 
 from django.urls import include, path
-from .views import E2ETestResultsListView, AddE2ETest
+from .views import E2ETestResultsListView, AddE2ETest, EditE2ETest
 
 urlpatterns = [
-    path("", E2ETestResultsListView.as_view(), name="test-results-list"),
-    path("add-test/", AddE2ETest.as_view(), name="add-test"),
+    path("", E2ETestResultsListView.as_view(), name="e2e-test-results-list"),
+    path("add-test/", AddE2ETest.as_view(), name="add-e2e-test"),
+    path("edit-test/<int:pk>", EditE2ETest.as_view(), name="edit-e2e-test"),
 ]

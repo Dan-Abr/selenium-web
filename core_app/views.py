@@ -10,8 +10,9 @@ from pyparsing import one_of, oneOf
 from .forms import E2ETestParamsForm
 from .models import E2ETestParams, E2ETestResults
 
-TEST_RESULTS_TEMPLATE = 'pages/test_results_list.html'
-ADD_TEST_TEMPLATE = 'pages/add-test.html'
+TEST_RESULTS_TEMPLATE = 'pages/e2e-test-results-list.html'
+ADD_TEST_TEMPLATE = 'pages/add-e2e-test.html'
+EDIT_TEST_TEMPLATE = 'pages/edit-e2e-test.html'
 
 
 class E2ETestResultsListView(generic.ListView):
@@ -28,8 +29,8 @@ class E2ETestResultsListView(generic.ListView):
 class AddE2ETest(View):
     """Render scheduled tests and allow adding new tests.
     The class has two methods:
-    GET - get all scheduled tests.
-    POST - let the user add new tests.
+    GET - get all scheduled e2e-tests.
+    POST - let the user add new e2e-tests.
     """
 
     def get(self, request, *args, **kwargs):
@@ -82,3 +83,47 @@ class AddE2ETest(View):
         }
 
         return render(request, ADD_TEST_TEMPLATE, context)
+
+
+class EditE2ETest(View):
+    """Render a scheduled test and allow to edit it.
+    The class has two methods:
+    GET - get a scheduled e2e-test.
+    POST - let the user update the e2e-test.
+    """
+
+    def get(self, request, *args, **kwargs):
+        # Get the chosen e2e-test with its current settings (fields)
+        pk = self.kwargs.get('pk')
+        e2e_test_params = E2ETestParams.objects.get(pk=pk)
+
+        # instance=profile will load the requested e2e-test form
+        # with pre-filled fields.
+        e2e_test_form = E2ETestParamsForm(instance=e2e_test_params) 
+
+        context = {
+            'e2e_test_params': e2e_test_params,
+            'e2e_test_form': e2e_test_form,
+        }
+        return render(request, EDIT_TEST_TEMPLATE, context)
+
+    def post(self, request, *args, **kwargs):
+        """Update e2e-test settings.
+        """
+        # Get the chosen e2e-test with its current settings (fields)
+        pk = self.kwargs.get('pk')
+        e2e_test_params = E2ETestParams.objects.get(pk=pk)
+
+        # Update the e2e-test settings
+        e2e_test_form = E2ETestParamsForm(request.POST, instance=e2e_test_params) 
+        if e2e_test_form.is_valid():
+            # TASK: Add a boolean to trigger a successful message
+            e2e_test_form.save()
+
+        context = {
+            'e2e_test_params': e2e_test_params,
+            'e2e_test_form': e2e_test_form,
+            # TASK: Add a boolean to trigger a successful message
+        }
+
+        return render(request, EDIT_TEST_TEMPLATE, context)
