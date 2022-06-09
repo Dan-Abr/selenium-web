@@ -6,12 +6,14 @@ from .models import *
 class E2ETestParamsForm(forms.ModelForm):
     class Meta:
         model = E2ETestParams
-        fields = ['link',]
+        fields = ['link', 'launches_per_day']
 
         # Style with Bootstrap
         widgets = {
             'link': forms.TextInput(attrs={'class': 'form-control'}),
-        }
+            'launches_per_day': forms.NumberInput(attrs={'class': 'form-control'}), 
+                }
+                
         # Should not allow to edit fields:
         exclude = ['pk']  
 

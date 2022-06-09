@@ -3,7 +3,7 @@ from django.db import models
 
 class E2ETestParams(models.Model):
     link = models.TextField()  # link --> url
-
+    launches_per_day = models.FloatField()
     # ... list_of actions = [] ?
 
     created = models.DateTimeField(auto_now_add=True)

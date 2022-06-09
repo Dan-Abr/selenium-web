@@ -1,16 +1,20 @@
 from random import random
+#from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
 from django.views import View, generic
+from django.views.generic.edit import DeleteView
 from django_celery_beat.models import PeriodicTask, CrontabSchedule, IntervalSchedule
-from datetime import datetime, timedelta
+#from datetime import datetime, timedelta
 import json
 
 from .forms import E2ETestParamsForm
 from .models import E2ETestParams, E2ETestResults
 
-TEST_RESULTS_TEMPLATE = 'pages/e2e-test-results-list.html'
-ADD_TEST_TEMPLATE = 'pages/add-e2e-test.html'
-EDIT_TEST_TEMPLATE = 'pages/edit-e2e-test.html'
+TEST_RESULTS_TEMPLATE = 'core_app/pages/e2e-test-results-list.html'
+ADD_TEST_TEMPLATE = 'core_app/pages/add-e2e-test.html'
+EDIT_TEST_TEMPLATE = 'core_app/pages/edit-e2e-test.html'
+DELETE_TEST_CONFIRM_TEMPLATE = 'core_app/pages/e2etestparams_confirm_delete.html'
 
 
 class AddE2ETest(View):
@@ -45,18 +49,26 @@ class AddE2ETest(View):
         add_test_form = E2ETestParamsForm
 
         # Create an arbitrary schedule time for the e2e-test (for now)
-        schedule, _ = CrontabSchedule.objects.get_or_create(
-                        minute='39',
-                        hour='*',
-                        day_of_week='*',
-                        day_of_month='*',
-                        month_of_year='*',
-                    )
+        # schedule, _ = CrontabSchedule.objects.get_or_create(
+        #                 minute='39',
+        #                 hour='*',
+        #                 day_of_week='*',
+        #                 day_of_month='*',
+        #                 month_of_year='*',
+        #             )
         
+        launches_per_day_raw = float(request.POST.get('launches_per_day'))
+        # Round to not allow more than one test per minute
+        launches_per_day_scaled_to_minutes = round(1440 / launches_per_day_raw)
+        schedule, created = IntervalSchedule.objects.get_or_create(
+            every=launches_per_day_scaled_to_minutes,
+            period=IntervalSchedule.MINUTES,
+        )
+
         # Schedule the e2e-test
         PeriodicTask.objects.create(
-            #interval=schedule,                                 # created above.
-            crontab = schedule,
+            interval=schedule,                                 # created above.
+            # crontab = schedule,
             name=str(request.user)+'_E2Etest_'+str(random()),   # describes this periodic task. Incremental
             task='core_app.tasks.call_crawl_website',           # name of task.
             args=json.dumps([request.POST.get('link')]),        # populate with variables from the POST form
@@ -115,6 +127,21 @@ class EditE2ETest(View):
         }
 
         return render(request, EDIT_TEST_TEMPLATE, context)
+
+
+
+class DeleteE2ETest(DeleteView):
+    """_summary_
+
+    Args:
+        View (_type_): _description_
+    """
+    # The model to use
+    model = E2ETestParams
+    template_name = DELETE_TEST_CONFIRM_TEMPLATE
+
+    # Success url to redirect to
+    success_url = reverse_lazy('add-e2e-test')
 
 
 class E2ETestResultsListView(generic.ListView):
