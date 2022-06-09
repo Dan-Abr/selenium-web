@@ -5,25 +5,12 @@ from django_celery_beat.models import PeriodicTask, CrontabSchedule, IntervalSch
 from datetime import datetime, timedelta
 import json
 
-from pyparsing import one_of, oneOf
-
 from .forms import E2ETestParamsForm
 from .models import E2ETestParams, E2ETestResults
 
 TEST_RESULTS_TEMPLATE = 'pages/e2e-test-results-list.html'
 ADD_TEST_TEMPLATE = 'pages/add-e2e-test.html'
 EDIT_TEST_TEMPLATE = 'pages/edit-e2e-test.html'
-
-
-class E2ETestResultsListView(generic.ListView):
-    """_summary_
-
-    Args:
-        View (_type_): _description_
-    """
-    model = E2ETestResults
-    template_name = TEST_RESULTS_TEMPLATE
-    paginate_by = 10
 
 
 class AddE2ETest(View):
@@ -34,12 +21,12 @@ class AddE2ETest(View):
     """
 
     def get(self, request, *args, **kwargs):
-        # Show all scheduled tests
-        scheduled_tests = E2ETestParams.objects.filter().order_by('-created')
+        # Show all scheduled e2e-tests
+        all_scheduled_tests = E2ETestParams.objects.filter().order_by('-created')
         add_test_form = E2ETestParamsForm
 
         context = {
-            'scheduled_tests': scheduled_tests,
+            'all_scheduled_tests': all_scheduled_tests,
             'add_test_form': add_test_form,
         }
         return render(request, ADD_TEST_TEMPLATE, context)
@@ -54,10 +41,10 @@ class AddE2ETest(View):
 
         # Reload the page with the newest data.
         # Show all scheduled tests
-        scheduled_tests = E2ETestParams.objects.filter().order_by('-created')
+        all_scheduled_tests = E2ETestParams.objects.filter().order_by('-created')
         add_test_form = E2ETestParamsForm
 
-        # Schedule the E2Etest automatically for now
+        # Create an arbitrary schedule time for the e2e-test (for now)
         schedule, _ = CrontabSchedule.objects.get_or_create(
                         minute='39',
                         hour='*',
@@ -65,7 +52,8 @@ class AddE2ETest(View):
                         day_of_month='*',
                         month_of_year='*',
                     )
-
+        
+        # Schedule the e2e-test
         PeriodicTask.objects.create(
             #interval=schedule,                                 # created above.
             crontab = schedule,
@@ -78,7 +66,7 @@ class AddE2ETest(View):
         )
 
         context = {
-            'scheduled_tests': scheduled_tests,
+            'all_scheduled_tests': all_scheduled_tests,
             'add_test_form': add_test_form,
         }
 
@@ -89,7 +77,7 @@ class EditE2ETest(View):
     """Render a scheduled test and allow to edit it.
     The class has two methods:
     GET - get a scheduled e2e-test.
-    POST - let the user update the e2e-test.
+    POST - let the user update parameters of the e2e-test.
     """
 
     def get(self, request, *args, **kwargs):
@@ -97,7 +85,7 @@ class EditE2ETest(View):
         pk = self.kwargs.get('pk')
         e2e_test_params = E2ETestParams.objects.get(pk=pk)
 
-        # instance=profile will load the requested e2e-test form
+        # instance=e2e_test_params will load the requested e2e-test form
         # with pre-filled fields.
         e2e_test_form = E2ETestParamsForm(instance=e2e_test_params) 
 
@@ -117,13 +105,21 @@ class EditE2ETest(View):
         # Update the e2e-test settings
         e2e_test_form = E2ETestParamsForm(request.POST, instance=e2e_test_params) 
         if e2e_test_form.is_valid():
-            # TASK: Add a boolean to trigger a successful message
+            # TASK: Add a boolean to trigger a successful message as feedback
             e2e_test_form.save()
 
         context = {
             'e2e_test_params': e2e_test_params,
             'e2e_test_form': e2e_test_form,
-            # TASK: Add a boolean to trigger a successful message
+            # TASK: Add a boolean to trigger a successful message as feedback
         }
 
         return render(request, EDIT_TEST_TEMPLATE, context)
+
+
+class E2ETestResultsListView(generic.ListView):
+    """List the results of scheduled e2e-tests.
+    """
+    model = E2ETestResults
+    template_name = TEST_RESULTS_TEMPLATE
+    paginate_by = 10

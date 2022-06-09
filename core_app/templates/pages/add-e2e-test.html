@@ -14,7 +14,7 @@
     </form>
 
     <!-- Display all the results after crawling -->
-    <div class="mt-5">Total tests: {{ scheduled_tests.count }}</div>
+    <div class="mt-5">Total tests: {{ all_scheduled_tests.count }}</div>
     <table class="table">
         <thead>
             <tr>
@@ -27,7 +27,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for item in scheduled_tests %}
+            {% for item in all_scheduled_tests %}
             <tr>
                 <th scope="row">{{ item.id }}</th>
                 <td>
