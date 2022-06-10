@@ -36,15 +36,7 @@ class AddE2ETest(View):
         return render(request, ADD_TEST_TEMPLATE, context)
 
     def post(self, request, *args, **kwargs):
-        # Create an arbitrary schedule time for the e2e-test (for now)
-        # schedule, _ = CrontabSchedule.objects.get_or_create(
-        #                 minute='39',
-        #                 hour='*',
-        #                 day_of_week='*',
-        #                 day_of_month='*',
-        #                 month_of_year='*',
-        #             )
-        
+        # Calculate form variables for the Celery task
         launches_per_day_raw = float(request.POST.get('launches_per_day'))
         # Round to not allow more than one test per minute
         launches_per_day_scaled_to_minutes = round(1440 / launches_per_day_raw)
@@ -54,9 +46,8 @@ class AddE2ETest(View):
         )
 
         # Schedule the e2e-test
-        celery_task = PeriodicTask.objects.create(
+        periodic_task = PeriodicTask.objects.create(
             interval=schedule,                                 # created above.
-            # crontab = schedule,
             name=str(request.user)+'_E2Etest_'+str(random()),   # describes this periodic task. Incremental
             task='core_app.tasks.call_crawl_website',           # name of task.
             args=json.dumps([request.POST.get('link')]),        # populate with variables from the POST form
@@ -71,7 +62,7 @@ class AddE2ETest(View):
         if e2e_test_form.is_valid():
             # Connect between the Celery task and the app task
             new_test_job = e2e_test_form.save(commit=False)
-            new_test_job.celery_task = celery_task
+            new_test_job.periodic_task = periodic_task
             new_test_job.save()
 
         # Reload the page with the newest data.
@@ -97,14 +88,14 @@ class EditE2ETest(View):
     def get(self, request, *args, **kwargs):
         # Get the chosen e2e-test with its current settings (fields)
         pk = self.kwargs.get('pk')
-        e2e_test_params = E2ETestParams.objects.get(pk=pk)
+        e2e_test = E2ETestParams.objects.get(pk=pk)
 
-        # instance=e2e_test_params will load the requested e2e-test form
+        # instance=e2e_test will load the requested e2e-test form
         # with pre-filled fields.
-        e2e_test_form = E2ETestParamsForm(instance=e2e_test_params) 
+        e2e_test_form = E2ETestParamsForm(instance=e2e_test) 
 
         context = {
-            'e2e_test_params': e2e_test_params,
+            'e2e_test': e2e_test,
             'e2e_test_form': e2e_test_form,
         }
         return render(request, EDIT_TEST_TEMPLATE, context)
@@ -113,17 +104,33 @@ class EditE2ETest(View):
         """Update e2e-test settings.
         """
         # Get the chosen e2e-test with its current settings (fields)
-        pk = self.kwargs.get('pk')
-        e2e_test_params = E2ETestParams.objects.get(pk=pk)
-
+        e2e_test_pk = self.kwargs.get('pk')
+        e2e_test = E2ETestParams.objects.get(pk=e2e_test_pk)
         # Update the e2e-test settings
-        e2e_test_form = E2ETestParamsForm(request.POST, instance=e2e_test_params) 
+        e2e_test_form = E2ETestParamsForm(request.POST, instance=e2e_test) 
         if e2e_test_form.is_valid():
             # TASK: Add a boolean to trigger a successful message as feedback
             e2e_test_form.save()
+        
+        # Calculate form variables for the Celery task
+        launches_per_day_raw = float(request.POST.get('launches_per_day'))
+        # Round to not allow more than one test per minute
+        launches_per_day_scaled_to_minutes = round(1440 / launches_per_day_raw)
+        schedule, created = IntervalSchedule.objects.get_or_create(
+            every=launches_per_day_scaled_to_minutes,
+            period=IntervalSchedule.MINUTES,
+        )
+
+        # Get the according Celery task from beat's PeriodicTask table
+        periodic_task = PeriodicTask.objects.get(pk=e2e_test.periodic_task.id)
+        # Update values in the Celery task
+        periodic_task.enabled = True  # TASK: Should be received from form!
+        periodic_task.interval = schedule
+        periodic_task.args = json.dumps([request.POST.get('link')])
+        periodic_task.save()
 
         context = {
-            'e2e_test_params': e2e_test_params,
+            'e2e_test': e2e_test,
             'e2e_test_form': e2e_test_form,
             # TASK: Add a boolean to trigger a successful message as feedback
         }
@@ -134,8 +141,8 @@ class EditE2ETest(View):
 class DeleteE2ETest(View):
     def get(self, request, *args, **kwargs):
         # Get the chosen e2e-test with its current settings (fields)
-        pk = self.kwargs.get('pk')
-        e2e_test = E2ETestParams.objects.get(pk=pk)
+        e2e_test_pk = self.kwargs.get('pk')
+        e2e_test = E2ETestParams.objects.get(pk=e2e_test_pk)
 
         context = {
             'e2e_test': e2e_test,
@@ -144,12 +151,13 @@ class DeleteE2ETest(View):
 
     def post(self, request, *args, **kwargs):
         # Get the chosen e2e-test with its current settings (fields)
-        pk = self.kwargs.get('pk')
-        e2e_test = E2ETestParams.objects.get(pk=pk)
-        celery_task = PeriodicTask.objects.get(pk=e2e_test.celery_task.id)
-
+        e2e_test_pk = self.kwargs.get('pk')
+        e2e_test = E2ETestParams.objects.get(pk=e2e_test_pk)
+        # Get the according Celery task from beat's PeriodicTask table
+        periodic_task = PeriodicTask.objects.get(pk=e2e_test.periodic_task.id)
+        # Delete both
         e2e_test.delete()
-        celery_task.delete()
+        periodic_task.delete()
 
         # Go back to the page with all scheduled tests
         all_scheduled_tests = E2ETestParams.objects.filter().order_by('-created')
