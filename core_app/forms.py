@@ -15,7 +15,7 @@ class E2ETestParamsForm(forms.ModelForm):
                 }
                 
         # Should not allow to edit fields:
-        exclude = ['pk']  
+        exclude = ['pk', 'celery_task']  
 
 
 # class UserForm(forms.ModelForm):

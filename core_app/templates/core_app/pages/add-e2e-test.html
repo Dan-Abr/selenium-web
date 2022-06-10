@@ -3,11 +3,11 @@
 {% block content %}
 <div class="mt-5 py-5">
 
-    <form id="add_test_form" method="post" enctype="multipart/form-data">
+    <form id="e2e_test_form" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         
         <div class="form-group">
-            {{ add_test_form.as_p }}
+            {{ e2e_test_form.as_p }}
             <small id="emailHelp" class="form-text text-muted">Some text.</small>
         </div>
         <button type="submit" class="btn btn-primary">Add</button>
@@ -64,4 +64,5 @@
     {% endif %}
 
 </div>
+
 {% endblock content %}
