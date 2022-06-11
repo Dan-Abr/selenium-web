@@ -1,9 +1,8 @@
 from random import random
-#from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.views import View, generic
-from django.views.generic.edit import DeleteView
 from django_celery_beat.models import PeriodicTask, CrontabSchedule, IntervalSchedule
 #from datetime import datetime, timedelta
 import json
@@ -14,7 +13,7 @@ from .models import E2ETestParams, E2ETestResults
 TEST_RESULTS_TEMPLATE = 'core_app/pages/e2e-test-results-list.html'
 ADD_TEST_TEMPLATE = 'core_app/pages/add-e2e-test.html'
 EDIT_TEST_TEMPLATE = 'core_app/pages/edit-e2e-test.html'
-DELETE_TEST_CONFIRM_TEMPLATE = 'core_app/pages/e2etestparams_confirm_delete.html'
+DELETE_TEST_CONFIRM_TEMPLATE = 'core_app/pages/e2etest_confirm_delete.html'
 
 
 class AddE2ETest(View):
@@ -159,15 +158,8 @@ class DeleteE2ETest(View):
         e2e_test.delete()
         periodic_task.delete()
 
-        # Go back to the page with all scheduled tests
-        all_scheduled_tests = E2ETestParams.objects.filter().order_by('-created')
-        e2e_test_form = E2ETestParamsForm
-
-        context = {
-            'all_scheduled_tests': all_scheduled_tests,
-            'e2e_test_form': e2e_test_form,
-        }
-        return render(request, ADD_TEST_TEMPLATE, context)
+        # Return to the tests' page
+        return redirect(reverse('add-e2e-test'))
 
 
 class E2ETestResultsListView(generic.ListView):
