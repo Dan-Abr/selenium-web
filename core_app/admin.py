@@ -4,7 +4,7 @@ from .models import E2ETestResults, E2ETestParams
 
 class E2ETestResultsAdmin(admin.ModelAdmin):
     list_display = [
-        'link',
+        'url',
         'page_title',
         'status',
         'created',
@@ -13,7 +13,7 @@ class E2ETestResultsAdmin(admin.ModelAdmin):
 
 class E2ETestParamsAdmin(admin.ModelAdmin):
     list_display = [
-        'link',
+        'url',
         'launches_per_day',
         'created',
         'updated',

@@ -4,13 +4,18 @@ from .models import *
 
 
 class E2ETestParamsForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        # Label with uppercase 
+        super(E2ETestParamsForm, self).__init__(*args, **kwargs)
+        self.fields['url'].label = "URL"
+
     class Meta:
         model = E2ETestParams
-        fields = ['link', 'launches_per_day']
+        fields = ['url', 'launches_per_day']
 
         # Style with Bootstrap
         widgets = {
-            'link': forms.TextInput(attrs={'class': 'form-control'}),
+            'url': forms.URLInput(attrs={'class': 'form-control'}),
             'launches_per_day': forms.NumberInput(attrs={'class': 'form-control'}), 
                 }
                 

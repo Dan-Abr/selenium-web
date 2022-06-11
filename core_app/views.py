@@ -49,7 +49,7 @@ class AddE2ETest(View):
             interval=schedule,                                 # created above.
             name=str(request.user)+'_E2Etest_'+str(random()),   # describes this periodic task. Incremental
             task='core_app.tasks.call_crawl_website',           # name of task.
-            args=json.dumps([request.POST.get('link')]),        # populate with variables from the POST form
+            args=json.dumps([request.POST.get('url')]),        # populate with variables from the POST form
             kwargs=json.dumps({}),
             #expires=datetime.utcnow() + timedelta(seconds=30)
             one_off=True
@@ -125,7 +125,7 @@ class EditE2ETest(View):
         # Update values in the Celery task
         periodic_task.enabled = True  # TASK: Should be received from form!
         periodic_task.interval = schedule
-        periodic_task.args = json.dumps([request.POST.get('link')])
+        periodic_task.args = json.dumps([request.POST.get('url')])
         periodic_task.save()
 
         context = {

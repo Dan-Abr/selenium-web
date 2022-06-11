@@ -24,11 +24,10 @@ def crawl_website(url, find_element_class):
         )
 
         elements = browser.find_elements_by_xpath(find_element_class)
-        print(elements)
 
         # Store crawled data in the database
         E2ETestResults.objects.create(
-            link=url,
+            url=url,
             page_title="title",
             status="Success",
         )
@@ -38,7 +37,7 @@ def crawl_website(url, find_element_class):
         browser.quit()
 
         E2ETestResults.objects.create(
-            link=url,
+            url=url,
             page_title="title",
             status="Failed",
         )
