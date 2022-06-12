@@ -37,13 +37,13 @@ class AddE2ETest(View):
         return render(request, ADD_TEST_TEMPLATE, context)
 
     def post(self, request, *args, **kwargs):
-        # Calculate form variables for the Celery task
+        # Calculate form variables for the Celery task (& database storage)
         launches_per_day_raw = float(request.POST.get('launches_per_day'))
-        # Round to not allow more than one test per minute
-        launches_per_day_scaled_to_minutes = round(1440 / launches_per_day_raw)
+        # Prevent more than one test per minute
+        launches_per_day_scaled_to_microseconds = 86400000000/max(round(launches_per_day_raw), 1)
         schedule, created = IntervalSchedule.objects.get_or_create(
-            every=launches_per_day_scaled_to_minutes,
-            period=IntervalSchedule.MINUTES,
+            every=launches_per_day_scaled_to_microseconds,
+            period=IntervalSchedule.MICROSECONDS,
         )
 
         # Schedule the e2e-test
@@ -62,9 +62,12 @@ class AddE2ETest(View):
 
         if e2e_test_params__form.is_valid():
             # Connect between the Celery task and the app task
-            new_test_job = e2e_test_params__form.save(commit=False)
-            new_test_job.periodic_task = periodic_task
-            new_test_job.save()
+            new_e2e_test_job = e2e_test_params__form.save(commit=False)
+            # e2e_test_launches_in_minutes = (max(round(launches_per_day_scaled_to_microseconds), 1)/1000000)/60
+            # new_e2e_test_job.launches_per_day = 1440/e2e_test_launches_in_minutes
+            new_e2e_test_job.launches_per_day = request.POST.get('launches_per_day')
+            new_e2e_test_job.periodic_task = periodic_task
+            new_e2e_test_job.save()
 
         # Reload the page with the newest data.
         # Show all scheduled tests
@@ -107,20 +110,22 @@ class EditE2ETest(View):
         # Get the chosen e2e-test with its current settings (fields)
         e2e_test_pk = self.kwargs.get('pk')
         e2e_test = E2ETestParams.objects.get(pk=e2e_test_pk)
-        # Update the e2e-test settings
+        
+        # Calculate form variables for the Celery task (& database storage)
+        launches_per_day_raw = float(request.POST.get('launches_per_day'))
+        # Round to prevent more than one test per minute
+        launches_per_day_scaled_to_microseconds = 86400000000/max(round(launches_per_day_raw), 1)
+        schedule, created = IntervalSchedule.objects.get_or_create(
+            every=launches_per_day_scaled_to_microseconds,
+            period=IntervalSchedule.MICROSECONDS,
+        )
+
+        # POST the updated e2e-test settings
         e2e_test_params__form = E2ETestParamsForm(request.POST, instance=e2e_test) 
         if e2e_test_params__form.is_valid():
+            e2e_test_params__form.launches_per_day = request.POST.get('launches_per_day')
             # TASK: Add a boolean to trigger a successful message as feedback
             e2e_test_params__form.save()
-        
-        # Calculate form variables for the Celery task
-        launches_per_day_raw = float(request.POST.get('launches_per_day'))
-        # Round to not allow more than one test per minute
-        launches_per_day_scaled_to_minutes = round(1440 / launches_per_day_raw)
-        schedule, created = IntervalSchedule.objects.get_or_create(
-            every=launches_per_day_scaled_to_minutes,
-            period=IntervalSchedule.MINUTES,
-        )
 
         # Get the according Celery task from beat's PeriodicTask table
         periodic_task = PeriodicTask.objects.get(pk=e2e_test.periodic_task.id)
