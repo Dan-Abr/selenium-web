@@ -73,8 +73,8 @@ class AddE2ETest(View):
             'all_scheduled_tests': all_scheduled_tests,
             'e2e_test_form': e2e_test_form,
         }
-
-        return render(request, ADD_TEST_TEMPLATE, context)
+        # Redirect instead of render to avoid multiple submissions on page refresh
+        return redirect(reverse('add-e2e-test'))
 
 
 class EditE2ETest(View):
