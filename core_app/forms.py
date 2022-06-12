@@ -1,6 +1,8 @@
+# Django
 from django import forms
+
+# local Django
 from .models import *
-#from django.contrib.auth.models import User
 
 
 class E2ETestParamsForm(forms.ModelForm):

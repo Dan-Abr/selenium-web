@@ -1,5 +1,8 @@
-from django.db import models
+# third-party
 from django_celery_beat.models import PeriodicTask
+
+# Django
+from django.db import models
 
 
 class E2ETestParams(models.Model):

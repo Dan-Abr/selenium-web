@@ -1,19 +1,21 @@
+# standard library
 from random import random
-from django.http import HttpResponseRedirect
+import json
+
+# Django
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View, generic
 from django_celery_beat.models import PeriodicTask, CrontabSchedule, IntervalSchedule
-#from datetime import datetime, timedelta
-import json
 
+# local Django
 from .forms import E2ETestParamsForm
 from .models import E2ETestParams, E2ETestResults
 
-TEST_RESULTS_TEMPLATE = 'core_app/pages/e2e-test-results-list.html'
-ADD_TEST_TEMPLATE = 'core_app/pages/add-e2e-test.html'
-EDIT_TEST_TEMPLATE = 'core_app/pages/edit-e2e-test.html'
-DELETE_TEST_CONFIRM_TEMPLATE = 'core_app/pages/e2etest_confirm_delete.html'
+TEST_RESULTS_TEMPLATE = 'core_app/pages/e2e_test_results_list.html'
+ADD_TEST_TEMPLATE = 'core_app/pages/add_e2e_test.html'
+EDIT_TEST_TEMPLATE = 'core_app/pages/edit_e2e_test.html'
+DELETE_TEST_CONFIRM_TEMPLATE = 'core_app/pages/e2e_test_confirm_delete.html'
 
 
 class AddE2ETest(View):
@@ -26,11 +28,11 @@ class AddE2ETest(View):
     def get(self, request, *args, **kwargs):
         # Show all scheduled e2e-tests
         all_scheduled_tests = E2ETestParams.objects.filter().order_by('-created')
-        e2e_test_form = E2ETestParamsForm
+        e2e_test_params__form = E2ETestParamsForm
 
         context = {
             'all_scheduled_tests': all_scheduled_tests,
-            'e2e_test_form': e2e_test_form,
+            'e2e_test_params__form': e2e_test_params__form,
         }
         return render(request, ADD_TEST_TEMPLATE, context)
 
@@ -46,32 +48,32 @@ class AddE2ETest(View):
 
         # Schedule the e2e-test
         periodic_task = PeriodicTask.objects.create(
-            interval=schedule,                                 # created above.
+            interval=schedule,                                  # created above.
             name=str(request.user)+'_E2Etest_'+str(random()),   # describes this periodic task. Incremental
             task='core_app.tasks.call_crawl_website',           # name of task.
-            args=json.dumps([request.POST.get('url')]),        # populate with variables from the POST form
+            args=json.dumps([request.POST.get('url')]),         # populate with variables from the POST form
             kwargs=json.dumps({}),
             #expires=datetime.utcnow() + timedelta(seconds=30)
-            one_off=True
+            #one_off=True
         )
 
         # POST to database
-        e2e_test_form = E2ETestParamsForm(request.POST)
+        e2e_test_params__form = E2ETestParamsForm(request.POST)
 
-        if e2e_test_form.is_valid():
+        if e2e_test_params__form.is_valid():
             # Connect between the Celery task and the app task
-            new_test_job = e2e_test_form.save(commit=False)
+            new_test_job = e2e_test_params__form.save(commit=False)
             new_test_job.periodic_task = periodic_task
             new_test_job.save()
 
         # Reload the page with the newest data.
         # Show all scheduled tests
         all_scheduled_tests = E2ETestParams.objects.filter().order_by('-created')
-        e2e_test_form = E2ETestParamsForm
+        e2e_test_params__form = E2ETestParamsForm
 
         context = {
             'all_scheduled_tests': all_scheduled_tests,
-            'e2e_test_form': e2e_test_form,
+            'e2e_test_params__form': e2e_test_params__form,
         }
         # Redirect instead of render to avoid multiple submissions on page refresh
         return redirect(reverse('add-e2e-test'))
@@ -91,11 +93,11 @@ class EditE2ETest(View):
 
         # instance=e2e_test will load the requested e2e-test form
         # with pre-filled fields.
-        e2e_test_form = E2ETestParamsForm(instance=e2e_test) 
+        e2e_test_params__form = E2ETestParamsForm(instance=e2e_test) 
 
         context = {
             'e2e_test': e2e_test,
-            'e2e_test_form': e2e_test_form,
+            'e2e_test_params__form': e2e_test_params__form,
         }
         return render(request, EDIT_TEST_TEMPLATE, context)
 
@@ -106,10 +108,10 @@ class EditE2ETest(View):
         e2e_test_pk = self.kwargs.get('pk')
         e2e_test = E2ETestParams.objects.get(pk=e2e_test_pk)
         # Update the e2e-test settings
-        e2e_test_form = E2ETestParamsForm(request.POST, instance=e2e_test) 
-        if e2e_test_form.is_valid():
+        e2e_test_params__form = E2ETestParamsForm(request.POST, instance=e2e_test) 
+        if e2e_test_params__form.is_valid():
             # TASK: Add a boolean to trigger a successful message as feedback
-            e2e_test_form.save()
+            e2e_test_params__form.save()
         
         # Calculate form variables for the Celery task
         launches_per_day_raw = float(request.POST.get('launches_per_day'))
@@ -130,7 +132,7 @@ class EditE2ETest(View):
 
         context = {
             'e2e_test': e2e_test,
-            'e2e_test_form': e2e_test_form,
+            'e2e_test_params__form': e2e_test_params__form,
             # TASK: Add a boolean to trigger a successful message as feedback
         }
 

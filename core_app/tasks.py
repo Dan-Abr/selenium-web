@@ -1,7 +1,11 @@
+# third-party
 from celery import Celery, shared_task
+
+# local Django
 from .crawlers import crawl_website
 
-app = Celery("tasks", broker="redis://localhost/", backend="redis://localhost/")
+
+app = Celery('tasks', broker='redis://localhost/', backend='redis://localhost/')
 # celery -A selenium_web beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
 # celery -A selenium_web beat --loglevel=info
 
