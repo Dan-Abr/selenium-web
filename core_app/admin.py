@@ -18,6 +18,7 @@ class E2ETestParamsAdmin(admin.ModelAdmin):
     list_display = [
         'url',
         'launches_per_day',
+        'enabled',
         'created',
         'updated',
     ]

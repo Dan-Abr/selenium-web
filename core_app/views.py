@@ -48,6 +48,7 @@ class AddE2ETest(View):
 
         # Schedule the e2e-test
         periodic_task = PeriodicTask.objects.create(
+            enabled = True if request.POST.get('enabled') == "on" else False,
             interval=schedule,                                  # created above.
             name=str(request.user)+'_E2Etest_'+str(random()),   # describes this periodic task. Incremental
             task='core_app.tasks.call_crawl_website',           # name of task.
@@ -130,7 +131,7 @@ class EditE2ETest(View):
         # Get the according Celery task from beat's PeriodicTask table
         periodic_task = PeriodicTask.objects.get(pk=e2e_test.periodic_task.id)
         # Update values in the Celery task
-        periodic_task.enabled = True  # TASK: Should be received from form!
+        periodic_task.enabled = True if request.POST.get('enabled') == "on" else False
         periodic_task.interval = schedule
         periodic_task.args = json.dumps([request.POST.get('url')])
         periodic_task.save()

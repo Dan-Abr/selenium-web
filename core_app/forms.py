@@ -13,7 +13,7 @@ class E2ETestParamsForm(forms.ModelForm):
 
     class Meta:
         model = E2ETestParams
-        fields = ['url', 'launches_per_day']
+        fields = ['url', 'launches_per_day', 'enabled']
 
         # Style with Bootstrap
         widgets = {
