@@ -24,6 +24,8 @@
                 <th scope="col">Status</th>
                 <th scope="col">Time</th>
                 <th scope="col">Launches per day</th>
+                <th scope="col">Start</th>
+                <th scope="col">End</th>
                 <th scope="col">Enabled</th>
                 <th scope="col">Edit</th>
                 <th scope="col">Delete</th>
@@ -40,6 +42,8 @@
                 <td>-</td>
                 <td>-</td>
                 <td>{{ item.launches_per_day }}</td>
+                <td>{{ item.start_date }}</td>
+                <td>{{ item.end_date }}</td>
                 <td>{{ item.enabled }}</td>
                 <td><a class="page-link" href="{% url 'edit-e2e-test' item.id %}">Edit</a></td>
                 <td><a class="page-link" href="{% url 'delete-e2e-test' item.id %}">Delete</a></td>
@@ -66,5 +70,4 @@
     {% endif %}
 
 </div>
-
 {% endblock content %}

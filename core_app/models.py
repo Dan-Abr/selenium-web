@@ -1,14 +1,17 @@
 # third-party
 from django_celery_beat.models import PeriodicTask
+from datetime import date, datetime
 
 # Django
 from django.db import models
 
 
-class E2ETestParams(models.Model):
+class E2ETestParamsModel(models.Model):
     url = models.URLField()
     launches_per_day = models.FloatField()
     
+    start_date = models.DateField(blank=True, default=datetime.today())
+    end_date = models.DateField(blank=True)
     enabled = models.BooleanField(default=True)
     # ... list_of actions = [] ?
     
@@ -22,7 +25,7 @@ class E2ETestParams(models.Model):
 
 
 # Create your models here.
-class E2ETestResults(models.Model):
+class E2ETestResultsModel(models.Model):
     url = models.TextField()
     page_title = models.CharField(max_length=200)
     status = models.CharField(max_length=10)

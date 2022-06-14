@@ -2,7 +2,7 @@
 from django.contrib import admin
 
 # local Django
-from .models import E2ETestResults, E2ETestParams
+from .models import E2ETestResultsModel, E2ETestParamsModel
 
 
 class E2ETestResultsAdmin(admin.ModelAdmin):
@@ -23,5 +23,5 @@ class E2ETestParamsAdmin(admin.ModelAdmin):
         'updated',
     ]
 
-admin.site.register(E2ETestResults, E2ETestResultsAdmin)
-admin.site.register(E2ETestParams, E2ETestParamsAdmin)
+admin.site.register(E2ETestResultsModel, E2ETestResultsAdmin)
+admin.site.register(E2ETestParamsModel, E2ETestParamsAdmin)

@@ -6,7 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
 # local Django
-from .models import E2ETestResults
+from .models import E2ETestResultsModel
 
 
 def crawl_website(url, find_element_class):
@@ -28,7 +28,7 @@ def crawl_website(url, find_element_class):
         elements = browser.find_elements_by_xpath(find_element_class)
 
         # Store crawled data in the database
-        E2ETestResults.objects.create(
+        E2ETestResultsModel.objects.create(
             url=url,
             page_title="title",
             status="Success",
@@ -38,7 +38,7 @@ def crawl_website(url, find_element_class):
         print("waiting to load")
         browser.quit()
 
-        E2ETestResults.objects.create(
+        E2ETestResultsModel.objects.create(
             url=url,
             page_title="title",
             status="Failed",
