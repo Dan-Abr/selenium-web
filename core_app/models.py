@@ -10,8 +10,8 @@ class E2ETestParamsModel(models.Model):
     url = models.URLField()
     launches_per_day = models.FloatField()
     
-    start_date = models.DateField(blank=True, default=datetime.today())
-    end_date = models.DateField(blank=True)
+    start_date = models.DateField(default=datetime.today())
+    end_date = models.DateField(blank=True, null=True)
     enabled = models.BooleanField(default=True)
     # ... list_of actions = [] ?
     

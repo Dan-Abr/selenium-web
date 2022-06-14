@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.views import View, generic
 from django_celery_beat.models import PeriodicTask, CrontabSchedule, IntervalSchedule
 from django.utils.dateparse import parse_datetime
+from django.forms import DateField
 
 # local Django
 from .forms import E2ETestParamsModelForm
@@ -48,7 +49,7 @@ class AddE2ETest(View):
             period=IntervalSchedule.MICROSECONDS,
         )
 
-        # Schedule the e2e-test
+        # Schedule the e2e-test using Celery
         periodic_task = PeriodicTask.objects.create(
             enabled = True if request.POST.get('enabled') == "on" else False,
             interval=schedule,                                  # created above.
@@ -57,7 +58,7 @@ class AddE2ETest(View):
             args=json.dumps([request.POST.get('url')]),         # populate with variables from the POST form
             kwargs=json.dumps({}),
             start_time = request.POST.get('start_date'),
-            expires = request.POST.get('end_date'),
+            expires = None if request.POST.get('end_date') == "" else request.POST.get('end_date'),
             #one_off=True
         )
 
@@ -70,6 +71,10 @@ class AddE2ETest(View):
             # e2e_test_launches_in_minutes = (max(round(launches_per_day_scaled_to_microseconds), 1)/1000000)/60
             # new_e2e_test_job.launches_per_day = 1440/e2e_test_launches_in_minutes
             new_e2e_test_job.launches_per_day = request.POST.get('launches_per_day')
+            if type(request.POST.get('start_date')) is type(DateField):
+                new_e2e_test_job.start_date = request.POST.get('start_date')
+            if type(request.POST.get('end_date')) is type(DateField):
+                new_e2e_test_job.end_date = request.POST.get('end_date')
             new_e2e_test_job.periodic_task = periodic_task
             new_e2e_test_job.save()
 
@@ -127,8 +132,12 @@ class EditE2ETest(View):
         # POST the updated e2e-test settings
         e2e_test_params__form = E2ETestParamsModelForm(request.POST, instance=e2e_test) 
         if e2e_test_params__form.is_valid():
-            e2e_test_params__form.launches_per_day = request.POST.get('launches_per_day')
             # TASK: Add a boolean to trigger a successful message as feedback
+            e2e_test_params__form.launches_per_day = request.POST.get('launches_per_day')
+            if type(request.POST.get('start_date')) is type(DateField):
+                e2e_test_params__form.start_date = request.POST.get('start_date')
+            if type(request.POST.get('end_date')) is type(DateField):
+                e2e_test_params__form.end_date = request.POST.get('end_date')
             e2e_test_params__form.end_date = request.POST.get('end_date')
             e2e_test_params__form.save()
 
@@ -137,7 +146,7 @@ class EditE2ETest(View):
         # Update values in the Celery task
         periodic_task.enabled = True if request.POST.get('enabled') == "on" else False
         periodic_task.interval = schedule
-        periodic_task.expires = request.POST.get('end_date')
+        periodic_task.expires =  None if request.POST.get('end_date') == "" else request.POST.get('end_date')
         periodic_task.args = json.dumps([request.POST.get('url')])
         periodic_task.save()
 
