@@ -11,6 +11,12 @@ class UserRegisterForm(UserCreationForm):
     # email = forms.CharField(widget=forms.PasswordInput())
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}))
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}))
+    
+    def __init__(self, *args, **kwargs):
+        # Label with uppercase 
+        super(UserCreationForm, self).__init__(*args, **kwargs)
+        self.fields['password1'].label = "Password"
+        self.fields['password2'].label = "Verify Password"
 
     class Meta:
         model = User
