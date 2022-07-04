@@ -1,0 +1,17 @@
+{% extends "../layout/base.html" %}
+
+{% block content %}
+<div class="shadow mt-5 p-4 py-5 bg-body rounded">
+
+    <form id="user_register__form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            {{ form.as_p }}
+            <small id="emailHelp" class="form-text text-muted">Some text.</small>
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+
+</div>
+{% endblock content %}

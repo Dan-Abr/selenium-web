@@ -1,5 +1,4 @@
 # standard library
-from datetime import datetime
 from random import random
 import json
 
@@ -7,13 +6,17 @@ import json
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View, generic
-from django_celery_beat.models import PeriodicTask, CrontabSchedule, IntervalSchedule
-from django.utils.dateparse import parse_datetime
+from django_celery_beat.models import PeriodicTask, IntervalSchedule
 from django.forms import DateField
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # local Django
-from .forms import E2ETestParamsModelForm
-from .models import E2ETestParamsModel, E2ETestResultsModel
+from ..forms import *
+from ..models import E2ETestParamsModel, E2ETestResultsModel
+
+
+REGISTER_TEMPLATE = 'core_app/auth/register.html'
+LOGIN_TEMPLATE = 'core_app/auth/login.html'
 
 TEST_RESULTS_TEMPLATE = 'core_app/pages/e2e_test_results_list.html'
 ADD_TEST_TEMPLATE = 'core_app/pages/add_e2e_test.html'
@@ -21,7 +24,7 @@ EDIT_TEST_TEMPLATE = 'core_app/pages/edit_e2e_test.html'
 DELETE_TEST_CONFIRM_TEMPLATE = 'core_app/pages/e2e_test_confirm_delete.html'
 
 
-class AddE2ETest(View):
+class AddE2ETest(LoginRequiredMixin, View):
     """Render scheduled tests and allow adding new tests.
     The class has two methods:
     GET - get all scheduled e2e-tests.
@@ -62,9 +65,10 @@ class AddE2ETest(View):
             #one_off=True
         )
 
-        # POST to database
+        # Create a database-entry object
         e2e_test_params__form = E2ETestParamsModelForm(request.POST)
 
+        # POST the entry to database
         if e2e_test_params__form.is_valid():
             # Connect between the Celery task and the app task
             new_e2e_test_job = e2e_test_params__form.save(commit=False)
@@ -91,7 +95,7 @@ class AddE2ETest(View):
         return redirect(reverse('add-e2e-test'))
 
 
-class EditE2ETest(View):
+class EditE2ETest(LoginRequiredMixin, View):
     """Render a scheduled test and allow to edit it.
     The class has two methods:
     GET - get a scheduled e2e-test.
@@ -129,8 +133,10 @@ class EditE2ETest(View):
             period=IntervalSchedule.MICROSECONDS,
         )
 
-        # POST the updated e2e-test settings
+        # Create a database-entry object
         e2e_test_params__form = E2ETestParamsModelForm(request.POST, instance=e2e_test) 
+        
+        # POST the entry to database
         if e2e_test_params__form.is_valid():
             # TASK: Add a boolean to trigger a successful message as feedback
             e2e_test_params__form.launches_per_day = request.POST.get('launches_per_day')
@@ -159,7 +165,7 @@ class EditE2ETest(View):
         return render(request, EDIT_TEST_TEMPLATE, context)
     
 
-class DeleteE2ETest(View):
+class DeleteE2ETest(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         # Get the chosen e2e-test with its current settings (fields)
         e2e_test_pk = self.kwargs.get('pk')
@@ -184,7 +190,7 @@ class DeleteE2ETest(View):
         return redirect(reverse('add-e2e-test'))
 
 
-class E2ETestResultsListView(generic.ListView):
+class E2ETestResultsListView(LoginRequiredMixin, generic.ListView):
     """List the results of scheduled e2e-tests.
     """
     model = E2ETestResultsModel

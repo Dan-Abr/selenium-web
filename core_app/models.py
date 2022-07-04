@@ -13,7 +13,7 @@ class E2ETestParamsModel(models.Model):
     start_date = models.DateField(default=datetime.today())
     end_date = models.DateField(blank=True, null=True)
     enabled = models.BooleanField(default=True)
-    # ... list_of actions = [] ?
+    # ... list_of actions = []
     
     periodic_task = models.OneToOneField(PeriodicTask, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
@@ -23,8 +23,6 @@ class E2ETestParamsModel(models.Model):
         return self.url[:20]
     
 
-
-# Create your models here.
 class E2ETestResultsModel(models.Model):
     url = models.TextField()
     page_title = models.CharField(max_length=200)

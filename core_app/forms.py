@@ -1,9 +1,31 @@
 # Django
 from django import forms
-# from django.contrib.admin.widgets import AdminDateWidget, AdminSplitDateTime
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 
 # local Django
 from .models import *
+
+
+class UserRegisterForm(UserCreationForm):
+    # email = forms.CharField(widget=forms.PasswordInput())
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}))
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}))
+
+    class Meta:
+        model = User
+        fields = ['username', 'password1', 'password2']
+        # Style with Bootstrap
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'password1': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'password2': forms.PasswordInput(attrs={'class': 'form-control'}),
+            }
+
+
+class UserLoginForm(forms.Form):
+    username = forms.CharField(max_length=63)
+    password = forms.CharField(max_length=63, widget=forms.PasswordInput)
 
 
 class E2ETestParamsModelForm(forms.ModelForm):
@@ -34,12 +56,3 @@ class E2ETestParamsModelForm(forms.ModelForm):
                 
         # Should not allow to edit fields:
         exclude = ['pk', 'periodic_task']  
-
-
-# class UserForm(forms.ModelForm):
-#     # The user password field should be safe, type of 'PasswordInput'
-#     password = forms.CharField(widget=forms.PasswordInput())
-
-#     class Meta:
-#         model = User
-#         fields = ['username', 'email', 'password']
