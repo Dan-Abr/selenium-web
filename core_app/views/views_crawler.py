@@ -52,35 +52,37 @@ class AddE2ETest(LoginRequiredMixin, View):
             period=IntervalSchedule.MICROSECONDS,
         )
 
-        # Schedule the e2e-test using Celery
-        periodic_task = PeriodicTask.objects.create(
-            enabled = True if request.POST.get('enabled') == "on" else False,
-            interval=schedule,                                  # created above.
-            name=str(request.user)+'_E2Etest_'+str(random()),   # describes this periodic task. Incremental
-            task='core_app.tasks.call_crawl_website',           # name of task.
-            args=json.dumps([request.POST.get('url')]),         # populate with variables from the POST form
-            kwargs=json.dumps({}),
-            start_time = request.POST.get('start_date'),
-            expires = None if request.POST.get('end_date') == "" else request.POST.get('end_date'),
-            #one_off=True
-        )
-
         # Create a database-entry object
         e2e_test_params__form = E2ETestParamsModelForm(request.POST)
 
         # POST the entry to database
         if e2e_test_params__form.is_valid():
             # Connect between the Celery task and the app task
-            new_e2e_test_job = e2e_test_params__form.save(commit=False)
+            e2e_test_params = e2e_test_params__form.save(commit=False)
             # e2e_test_launches_in_minutes = (max(round(launches_per_day_scaled_to_microseconds), 1)/1000000)/60
             # new_e2e_test_job.launches_per_day = 1440/e2e_test_launches_in_minutes
-            new_e2e_test_job.launches_per_day = request.POST.get('launches_per_day')
+
+            # Schedule the e2e-test using Celery
+            periodic_task = PeriodicTask.objects.create(
+                enabled = True if request.POST.get('enabled') == "on" else False,
+                interval=schedule,                                  # created above.
+                name=str(request.user)+'_E2Etest_'+str(random()),   # describes this periodic task. Incremental
+                task='core_app.tasks.call_crawl_website',           # name of task.
+                args=json.dumps([request.user.pk, request.POST.get('url')]),  # pass params for call_crawl_website()
+                kwargs=json.dumps({}),
+                start_time = request.POST.get('start_date'),
+                expires = None if request.POST.get('end_date') == "" else request.POST.get('end_date'),
+                #one_off=True
+            )
+
+            e2e_test_params.user = request.user
+            e2e_test_params.launches_per_day = request.POST.get('launches_per_day')
             if type(request.POST.get('start_date')) is type(DateField):
-                new_e2e_test_job.start_date = request.POST.get('start_date')
+                e2e_test_params.start_date = request.POST.get('start_date')
             if type(request.POST.get('end_date')) is type(DateField):
-                new_e2e_test_job.end_date = request.POST.get('end_date')
-            new_e2e_test_job.periodic_task = periodic_task
-            new_e2e_test_job.save()
+                e2e_test_params.end_date = request.POST.get('end_date')
+            e2e_test_params.periodic_task = periodic_task
+            e2e_test_params.save()
 
         # Reload the page with the newest data.
         # Show all scheduled tests

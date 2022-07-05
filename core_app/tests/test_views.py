@@ -37,7 +37,7 @@ class TestAuthViews(TestCase):
             'password': 'Test12321',
         }
 
-        # # Create Django's default user 
+        # Create Django's default user 
         User.objects.create_user(**self.user_dummy_credentials_1)
 
         # Login to the application

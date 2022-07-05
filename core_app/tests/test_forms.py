@@ -11,6 +11,8 @@ from django_celery_beat.models import PeriodicTask, IntervalSchedule
 class TestE2ETestParamsModelForm(TransactionTestCase):
     form = None
     periodic_task = None
+    user_dummy_credentials_1 = None
+    user_dummy_1 = None
 
     def setUp(self):
         # Generate data for the form
@@ -24,6 +26,13 @@ class TestE2ETestParamsModelForm(TransactionTestCase):
             name='test_PeriodicTask',   
             task='core_app.tasks.call_crawl_website',           
         )
+
+        self.user_dummy_credentials_1 = {
+            'username': 'test_user1',
+            'password': 'Test12321',
+        }
+
+        self.user_dummy_1 = User.objects.create_user(**self.user_dummy_credentials_1)
 
         form_data = {'url': 'https://google.com', 'launches_per_day': 1, 'start_date':datetime.today()}
         self.form = E2ETestParamsModelForm(data=form_data)
@@ -43,6 +52,7 @@ class TestE2ETestParamsModelForm(TransactionTestCase):
         if self.form.is_valid():
             # Connect between the Django-beat database (celery) and the app's database
             form_saved = self.form.save(commit=False)
+            form_saved.user = self.user_dummy_1
             form_saved.periodic_task = self.periodic_task
             form_saved.save()
         self.assertEqual(form_saved.url, 'https://google.com')
