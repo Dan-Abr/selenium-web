@@ -24,7 +24,7 @@ EDIT_TEST_TEMPLATE = 'core_app/pages/edit_e2e_test.html'
 DELETE_TEST_CONFIRM_TEMPLATE = 'core_app/pages/e2e_test_confirm_delete.html'
 
 
-class AddE2ETest(LoginRequiredMixin, View):
+class AddE2ETestView(LoginRequiredMixin, View):
     """Render scheduled tests and allow adding new tests.
     The class has two methods:
     GET - get all scheduled e2e-tests.
@@ -97,7 +97,7 @@ class AddE2ETest(LoginRequiredMixin, View):
         return redirect(reverse('add-e2e-test'))
 
 
-class EditE2ETest(LoginRequiredMixin, View):
+class EditE2ETestView(LoginRequiredMixin, View):
     """Render a scheduled test and allow to edit it.
     The class has two methods:
     GET - get a scheduled e2e-test.
@@ -167,7 +167,7 @@ class EditE2ETest(LoginRequiredMixin, View):
         return render(request, EDIT_TEST_TEMPLATE, context)
     
 
-class DeleteE2ETest(LoginRequiredMixin, View):
+class DeleteE2ETestView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         # Get the chosen e2e-test with its current settings (fields)
         e2e_test_pk = self.kwargs.get('pk')

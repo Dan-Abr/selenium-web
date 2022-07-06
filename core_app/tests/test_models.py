@@ -43,7 +43,7 @@ class TestModels(TestCase):
         self.e2e_test_results_1 = E2ETestResultsModel.objects.create(url='https://google.com', 
                                                                page_title='title', 
                                                                status='Passed',
-                                                               e2e_test_params=self.e2e_test_params_1,
+                                                            #    e2e_test_params=self.e2e_test_params_1,
                                                                user=self.user_dummy_1
                                                                )
 

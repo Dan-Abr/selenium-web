@@ -24,23 +24,29 @@ from .views.views_auth import *
 
 urlpatterns = [
     # Auth
-    path('register/', UserRegisterPageView.as_view(), name='user-register'),
-    path('login/', UserLoginPageView.as_view(), name='user-login'),
+    path('register/', UserRegisterView.as_view(), name='user-register'),
+    path('login/', UserLoginView.as_view(), name='user-login'),
     path('logout/', 
-         login_required(login_url='/login/')(UserLogoutPageView.as_view()), 
+         login_required(login_url='/login/')(UserLogoutView.as_view()), 
          name='user-logout'),
+    path('user-settings/', 
+         login_required(login_url='/login/')(UserSettingsView.as_view()), 
+         name='user-settings'),
+    path('password/', 
+         login_required(login_url='/login/')(UserPasswordChangeView.as_view()), 
+         name='user-change-password'),
 
     # App
     path('',  
          login_required(login_url='/login/')(E2ETestResultsListView.as_view()), 
          name='e2e-test-results-list'),
     path('add-test/',  
-         login_required(login_url='/login/')(AddE2ETest.as_view()), 
+         login_required(login_url='/login/')(AddE2ETestView.as_view()), 
          name='add-e2e-test'),
     path('edit-test/<int:pk>',  
-         login_required(login_url='/login/')(EditE2ETest.as_view()), 
+         login_required(login_url='/login/')(EditE2ETestView.as_view()), 
          name='edit-e2e-test'),
     path('edit-test/<int:pk>/delete',  
-         login_required(login_url='/login/')(DeleteE2ETest.as_view()), 
+         login_required(login_url='/login/')(DeleteE2ETestView.as_view()), 
          name='delete-e2e-test'),
 ]

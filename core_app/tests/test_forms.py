@@ -65,6 +65,7 @@ class TestUserRegisterForm(TransactionTestCase):
     def setUp(self):
         self.user_dummy_credentials_1 = {
             'username': 'test_user1',
+            'email': 'test@tests.com',
             'password1': 'Test12321',
             'password2': 'Test12321',
         }

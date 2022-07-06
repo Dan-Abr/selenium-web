@@ -30,10 +30,12 @@ class TestAuthViews(TestCase):
         self.login_url = reverse('user-login')
         self.logout_url = reverse('user-logout')
         self.register_url = reverse('user-register')
-        # self.user-settings = reverse('user-settings')
+        self.user_settings_url = reverse('user-settings')
+        self.user_change_password_url = reverse('user-change-password')
 
         self.user_dummy_credentials_1 = {
             'username': 'test_user1',
+            'email': 'test1@tests.com',
             'password': 'Test12321',
         }
 
@@ -81,7 +83,6 @@ class TestAuthViews(TestCase):
 
 
     def test_GET_inner_page_is_visible_if_logged_in(self):
-        # Get the timeline URL
         response = self.client.get(self.add_e2e_test_url)
         self.assertEqual(response.status_code, 200)
 
@@ -109,3 +110,19 @@ class TestAuthViews(TestCase):
         # Can fetch inner pages
         response = self.client.get(self.add_e2e_test_url)
         self.assertEqual(response.status_code, 200)
+
+
+    def test_GET_edit_user_settings(self):
+        response = self.client.get(self.user_settings_url)
+        self.assertEqual(response.status_code, 200)
+
+    
+    def test_POST_change_user_settings_email(self):
+        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11 CHECK THIS TEST WITH OTHER METHODS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
+        response = self.client.post(self.user_settings_url, {'email': 'test2@tests.com'}, follow=True)
+        self.assertTrue(response.context['user'].email, 'test2@tests.com')
+
+
+    # def test_GET_user_change_password_settings(self):
+    #     response = self.client.get(self.user_change_password_url)
+    #     self.assertEqual(response.status_code, 200)
