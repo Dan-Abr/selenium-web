@@ -88,7 +88,7 @@ class TestAuthViews(TestCase):
 
 
     def test_POST_register_no_data_no_redirect(self):
-        # First, ensure is logout
+        # Logout
         response = self.client.get(self.logout_url, follow=True)
         # Delete all users
         User.objects.all().delete()
@@ -100,7 +100,7 @@ class TestAuthViews(TestCase):
 
 
     def test_POST_register_valid_data_redirect(self):
-        # First, ensure is logout
+        # Logout
         response = self.client.get(self.logout_url, follow=True)
         # Delete all users
         User.objects.all().delete()
@@ -118,11 +118,20 @@ class TestAuthViews(TestCase):
 
     
     def test_POST_change_user_settings_email(self):
-        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11 CHECK THIS TEST WITH OTHER METHODS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
+        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CHECK THIS TEST WITH OTHER METHODS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         response = self.client.post(self.user_settings_url, {'email': 'test2@tests.com'}, follow=True)
         self.assertTrue(response.context['user'].email, 'test2@tests.com')
 
 
-    # def test_GET_user_change_password_settings(self):
-    #     response = self.client.get(self.user_change_password_url)
-    #     self.assertEqual(response.status_code, 200)
+    def test_GET_user_change_password_settings_logged_out_redirect(self):
+        # Logout
+        response = self.client.get(self.logout_url, follow=True)
+        # Delete all users
+        User.objects.all().delete()
+        response = self.client.get(self.user_change_password_url)
+        self.assertEqual(response.status_code, 302)
+
+
+    def test_GET_user_change_password_settings(self):
+        response = self.client.get(self.user_change_password_url)
+        self.assertEqual(response.status_code, 200)
