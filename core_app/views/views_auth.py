@@ -23,20 +23,21 @@ class UserRegisterView(SuccessMessageMixin, CreateView):
   template_name = REGISTER_TEMPLATE
   success_url = reverse_lazy('user-login')
   form_class = UserRegisterForm
-  success_message = "Your profile was created successfully"
+  success_message = "Your profile was created successfully."
 
 
-class UserPasswordChangeView(PasswordChangeView):
+class UserPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin, PasswordChangeView):
     template_name = CHANGE_PASSWORD_TEMPLATE
     success_url = reverse_lazy('user-change-password')
     form_class = UserPasswordChangeForm
-    success_message = "Your profile was changed successfully"
+    success_message = "Your profile was changed successfully."
 
 
-class UserSettingsView(LoginRequiredMixin, UpdateView):
+class UserSettingsView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
   template_name = SETTINGS_TEMPLATE
   success_url = reverse_lazy('user-settings')
   form_class = UserSettingsForm
+  success_message = "Your profile was changed successfully."
 
   def get_object(self):
     # Send the user's data to fill the form

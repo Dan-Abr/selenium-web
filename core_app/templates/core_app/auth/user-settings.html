@@ -3,6 +3,15 @@
 {% block content %}
 <div class="shadow mt-5 p-4 py-5 bg-body rounded">
     <p>Username: {{ request.user.username }}</p>
+    
+    {% if messages %}
+        <ul class="alert alert-success">
+    {% for message in messages %}
+            <li {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </li>
+    {% endfor %}
+        </ul>
+    {% endif %}
+
     <form id="user_settings__form" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         
