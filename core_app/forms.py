@@ -2,6 +2,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
+from django.forms import modelformset_factory
 
 # local Django
 from .models import *
@@ -74,13 +75,13 @@ class UserLoginForm(forms.Form):
     password = forms.CharField(max_length=63, widget=forms.PasswordInput)
 
 
-class E2ETestParamsModelForm(forms.ModelForm):
+class E2ETestParamsForm(forms.ModelForm):
     # start_date = forms.DateField(widget=AdminDateWidget())
     # start_time = forms.SplitDateTimeField(widget=AdminSplitDateTime())
 
     def __init__(self, *args, **kwargs):
         # Label with uppercase 
-        super(E2ETestParamsModelForm, self).__init__(*args, **kwargs)
+        super(E2ETestParamsForm, self).__init__(*args, **kwargs)
         self.fields['url'].label = "URL"
         
         # Do not allow edit 'start_date' once it was set
@@ -101,4 +102,19 @@ class E2ETestParamsModelForm(forms.ModelForm):
                 }
                 
         # Should not allow to edit fields:
-        exclude = ['pk', 'periodic_task']  
+        exclude = ['pk', 'periodic_task']
+
+
+E2ETestActionFormset = modelformset_factory(
+    E2ETestActionModel,
+    fields=('event_type', 'wait_time_in_sec', 'css_selector_click',),
+    extra=1,
+    widgets={
+        'wait_time_in_sec': forms.NumberInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': '-----'
+            }
+        )
+    }
+)

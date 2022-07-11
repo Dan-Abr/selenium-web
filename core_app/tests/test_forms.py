@@ -35,7 +35,7 @@ class TestE2ETestParamsModelForm(TransactionTestCase):
         self.user_dummy_1 = User.objects.create_user(**self.user_dummy_credentials_1)
 
         form_data = {'url': 'https://google.com', 'launches_per_day': 1, 'start_date':datetime.today()}
-        self.form = E2ETestParamsModelForm(data=form_data)
+        self.form = E2ETestParamsForm(data=form_data)
 
     def tearDown(self):
         PeriodicTask.objects.all().delete()

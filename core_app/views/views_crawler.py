@@ -34,11 +34,13 @@ class AddE2ETestView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         # Show all scheduled e2e-tests
         all_scheduled_tests = E2ETestParamsModel.objects.filter().order_by('-created')
-        e2e_test_params__form = E2ETestParamsModelForm
+        e2e_test_params__form = E2ETestParamsForm
+        e2e_test_action__formset = E2ETestActionFormset
 
         context = {
             'all_scheduled_tests': all_scheduled_tests,
             'e2e_test_params__form': e2e_test_params__form,
+            'e2e_test_action__formset': e2e_test_action__formset,
         }
         return render(request, ADD_TEST_TEMPLATE, context)
 
@@ -53,10 +55,11 @@ class AddE2ETestView(LoginRequiredMixin, View):
         )
 
         # Create a database-entry object
-        e2e_test_params__form = E2ETestParamsModelForm(request.POST)
+        e2e_test_params__form = E2ETestParamsForm(request.POST)
+        e2e_test_action__formset: E2ETestActionFormset(request.POST)
 
         # POST the entry to database
-        if e2e_test_params__form.is_valid():
+        if e2e_test_params__form.is_valid() and e2e_test_action__formset.is_valid():
             # Connect between the Celery task and the app task
             e2e_test_params = e2e_test_params__form.save(commit=False)
             # e2e_test_launches_in_minutes = (max(round(launches_per_day_scaled_to_microseconds), 1)/1000000)/60
@@ -84,15 +87,12 @@ class AddE2ETestView(LoginRequiredMixin, View):
             e2e_test_params.periodic_task = periodic_task
             e2e_test_params.save()
 
-        # Reload the page with the newest data.
-        # Show all scheduled tests
-        all_scheduled_tests = E2ETestParamsModel.objects.filter().order_by('-created')
-        e2e_test_params__form = E2ETestParamsModelForm
+            for form in e2e_test_action__formset:
+                # so that `book` instance can be attached.
+                e2e_test_action = form.save(commit=False)
+                e2e_test_action.e2e_test_params = e2e_test_params
+                e2e_test_action.save()
 
-        context = {
-            'all_scheduled_tests': all_scheduled_tests,
-            'e2e_test_params__form': e2e_test_params__form,
-        }
         # Redirect instead of render to avoid multiple submissions on page refresh
         return redirect(reverse('add-e2e-test'))
 
@@ -111,7 +111,7 @@ class EditE2ETestView(LoginRequiredMixin, View):
 
         # instance=e2e_test will load the requested e2e-test form
         # with pre-filled fields.
-        e2e_test_params__form = E2ETestParamsModelForm(instance=e2e_test) 
+        e2e_test_params__form = E2ETestParamsForm(instance=e2e_test) 
 
         context = {
             'e2e_test': e2e_test,
@@ -136,7 +136,7 @@ class EditE2ETestView(LoginRequiredMixin, View):
         )
 
         # Create a database-entry object
-        e2e_test_params__form = E2ETestParamsModelForm(request.POST, instance=e2e_test) 
+        e2e_test_params__form = E2ETestParamsForm(request.POST, instance=e2e_test) 
         
         # POST the entry to database
         if e2e_test_params__form.is_valid():

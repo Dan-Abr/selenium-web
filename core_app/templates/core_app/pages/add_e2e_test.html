@@ -3,16 +3,35 @@
 {% block content %}
 <div class="mt-5 py-5">
 
-    <form id="e2e_test_params__form" method="post" enctype="multipart/form-data">
+    <form id="e2e_test_params__form" class="form-horizontal" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         
         <div class="form-group">
             {{ e2e_test_params__form.as_p }}
             <small id="emailHelp" class="form-text text-muted">Some text.</small>
-        </div>
-        <button type="submit" class="btn btn-primary">Add</button>
-    </form>
+        </div>  
+    <hr />
 
+    <div id="action-forms">
+        {{ e2e_test_action__formset.management_form }}
+        {% for form in e2e_test_action__formset %}
+            <div id="action-form-0" class="action-form">
+                <h4 class="action-title">Action 1</h4>
+                {{ form.as_p }}
+                <button id="add-action-btn" type="button" class="btn btn-success add-form-row">Add New Action</button>
+                <hr />
+            </div>
+            
+        {% endfor %}
+    </div>
+
+    <div class="row spacer">
+        <div class="col-4">
+            <button type="submit" class="btn btn-block btn-primary">Create</button>
+        </div>
+    </div>
+</form>
+    
     <!-- Display all the results after crawling -->
     <div class="mt-5">Total tests: {{ all_scheduled_tests.count }}</div>
     <table class="table">
@@ -68,6 +87,42 @@
         </ul>
     </nav>
     {% endif %}
-
 </div>
+
+
+<!-- <script> 
+    // test
+    const addActionBtn = document.getElementById('add-action-btn')
+    const totalNewForms = document.getElementById('id_form-TOTAL_FORMS')
+
+    addActionBtn.addEventListener('click', add_action_form)
+
+    function add_action_form(event){
+        if(event){
+            // Prevent from "add-action" button to submit forms
+            event.preventDefault()
+            
+            // Add new form
+            const actionFormsDiv = document.getElementById('action-forms')
+            const allActionForms = document.getElementsByClassName('action-form')
+            const copyActionFormElement = document.getElementById('action-form-0').cloneNode(true)
+
+            copyActionFormElement.setAttribute('class', 'action-form')
+            copyActionFormElement.setAttribute('id', `action-form-${allActionForms.length}`)
+
+            // Properly rename the new form's labels
+            const regex = new RegExp('__prefix__', 'g')
+            copyActionFormElement.innerHTML = copyActionFormElement.innerHTML.replace(regex, allActionForms.length)
+            
+            totalNewForms.setAttribute('value', allActionForms.length+1)
+            actionFormsDiv.append(copyActionFormElement)
+            
+            // Add the same class to the delete button and update the number of forms
+            // ...
+
+
+        }
+    }
+</script> -->
+
 {% endblock content %}

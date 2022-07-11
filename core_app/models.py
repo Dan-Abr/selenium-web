@@ -7,6 +7,12 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+ACTION_TYPE = (
+    (1, ("wait")),
+    (2, ("click")),
+)
+
+
 class E2ETestParamsModel(models.Model):
     url = models.URLField()
     launches_per_day = models.FloatField()
@@ -23,7 +29,14 @@ class E2ETestParamsModel(models.Model):
     
     def __str__(self) -> str:
         return self.url[:20]
-    
+
+
+class E2ETestActionModel(models.Model):
+    e2e_test_params = models.ForeignKey(E2ETestParamsModel, on_delete=models.CASCADE)
+    event_type = models.IntegerField(choices=ACTION_TYPE, default=1)   
+    wait_time_in_sec = models.IntegerField(max_length=3)
+    css_selector_click = models.CharField(max_length=1024)
+
 
 class E2ETestResultsModel(models.Model):
     url = models.TextField()
