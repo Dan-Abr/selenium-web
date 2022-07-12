@@ -11,19 +11,19 @@
             <small id="emailHelp" class="form-text text-muted">Some text.</small>
         </div>  
     <hr />
-
-    <div id="action-forms">
+    <div class="row">
         {{ e2e_test_action__formset.management_form }}
         {% for form in e2e_test_action__formset %}
-            <div id="action-form-0" class="action-form">
-                <h4 class="action-title">Action 1</h4>
+        <div id="action-form-0" class="action-form card" style="width: 18rem;margin:5px;">
+            <div class="card-body">
+                <h4 class="action-title card-title">Action 1</h4>
                 {{ form.as_p }}
                 <button id="add-action-btn" type="button" class="btn btn-success add-form-row">Add New Action</button>
-                <hr />
-            </div>
-            
+            </div>    
+        </div>
         {% endfor %}
     </div>
+    <hr />
 
     <div class="row spacer">
         <div class="col-4">

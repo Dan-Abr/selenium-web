@@ -36,7 +36,7 @@ class AddE2ETestView(LoginRequiredMixin, View):
         all_scheduled_tests = E2ETestParamsModel.objects.filter(user=request.user).order_by('-created')
         e2e_test_params__form = E2ETestParamsForm
         e2e_test_action__formset = E2ETestActionFormset
-
+        
         context = {
             'all_scheduled_tests': all_scheduled_tests,
             'e2e_test_params__form': e2e_test_params__form,
