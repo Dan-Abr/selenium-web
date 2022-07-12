@@ -33,7 +33,7 @@ class AddE2ETestView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         # Show all scheduled e2e-tests
-        all_scheduled_tests = E2ETestParamsModel.objects.filter(author=request.user).order_by('-created')
+        all_scheduled_tests = E2ETestParamsModel.objects.filter(user=request.user).order_by('-created')
         e2e_test_params__form = E2ETestParamsForm
         e2e_test_action__formset = E2ETestActionFormset
 
