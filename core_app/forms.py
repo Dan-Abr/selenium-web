@@ -109,6 +109,7 @@ E2ETestActionFormset = modelformset_factory(
     E2ETestActionModel,
     fields=('event_type', 'wait_time_in_sec', 'css_selector_click',),
     extra=1,
+    max_num=7,
     widgets={
         'event_type': forms.Select(attrs={'class': 'form-control',}),
         'wait_time_in_sec': forms.NumberInput(attrs={'class': 'form-control','placeholder': '-----'}),

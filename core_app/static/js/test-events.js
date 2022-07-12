@@ -1,4 +1,3 @@
-
 // Find the 'Add New Action' button to add test functionalities (wait, click, etc)
 // Source - https://medium.com/all-about-django/adding-forms-dynamically-to-a-django-formset-375f1090c2b0
 
@@ -66,6 +65,7 @@ function deleteForm(prefix, btn) {
 
 
 $(document).on('click', '.add-form-row', function(e){
+    console.log("what")
     e.preventDefault();
     cloneMore('.action-form:last', 'form');
     return false;

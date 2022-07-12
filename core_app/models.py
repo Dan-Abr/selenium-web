@@ -23,7 +23,7 @@ class E2ETestParamsModel(models.Model):
     # ... list_of actions = []
     
     periodic_task = models.OneToOneField(PeriodicTask, db_index=True, on_delete=models.CASCADE)
-    user = models.OneToOneField(User, db_index=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, db_index=True, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     

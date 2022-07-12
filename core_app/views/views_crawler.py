@@ -12,7 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 # local Django
 from ..forms import *
-from ..models import E2ETestParamsModel, E2ETestResultsModel
+from ..models import E2ETestParamsModel, E2ETestResultsModel, E2ETestActionModel
 
 
 REGISTER_TEMPLATE = 'core_app/auth/register.html'
@@ -34,8 +34,9 @@ class AddE2ETestView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         # Show all scheduled e2e-tests
         all_scheduled_tests = E2ETestParamsModel.objects.filter(user=request.user).order_by('-created')
-        e2e_test_params__form = E2ETestParamsForm
-        e2e_test_action__formset = E2ETestActionFormset
+        e2e_test_params__form = E2ETestParamsForm(request.GET or None)
+        # On page load, reset the number of added forms
+        e2e_test_action__formset = E2ETestActionFormset(queryset=E2ETestActionModel.objects.none())
         
         context = {
             'all_scheduled_tests': all_scheduled_tests,
@@ -45,6 +46,9 @@ class AddE2ETestView(LoginRequiredMixin, View):
         return render(request, ADD_TEST_TEMPLATE, context)
 
     def post(self, request, *args, **kwargs):
+        # Will be used to name the tests in the database with incremental numbers
+        user_test_count = E2ETestParamsModel.objects.filter(user=request.user).__len__()
+
         # Calculate form variables for the Celery task (& database storage)
         launches_per_day_raw = float(request.POST.get('launches_per_day'))
         # Prevent more than one test per minute
@@ -56,7 +60,7 @@ class AddE2ETestView(LoginRequiredMixin, View):
 
         # Create a database-entry object
         e2e_test_params__form = E2ETestParamsForm(request.POST)
-        e2e_test_action__formset: E2ETestActionFormset(request.POST)
+        e2e_test_action__formset = E2ETestActionFormset(request.POST)
 
         # POST the entry to database
         if e2e_test_params__form.is_valid() and e2e_test_action__formset.is_valid():
@@ -68,9 +72,9 @@ class AddE2ETestView(LoginRequiredMixin, View):
             # Schedule the e2e-test using Celery
             periodic_task = PeriodicTask.objects.create(
                 enabled = True if request.POST.get('enabled') == "on" else False,
-                interval=schedule,                                  # created above.
-                name=str(request.user)+'_E2Etest_'+str(random()),   # describes this periodic task. Incremental
-                task='core_app.tasks.call_crawl_website',           # name of task.
+                interval=schedule,
+                name=str(request.user)+'_e2e-test_'+str(user_test_count),
+                task='core_app.tasks.call_crawl_website',
                 args=json.dumps([request.user.pk, request.POST.get('url')]),  # pass params for call_crawl_website()
                 kwargs=json.dumps({}),
                 start_time = request.POST.get('start_date'),
@@ -88,10 +92,11 @@ class AddE2ETestView(LoginRequiredMixin, View):
             e2e_test_params.save()
 
             for form in e2e_test_action__formset:
-                # so that `book` instance can be attached.
                 e2e_test_action = form.save(commit=False)
                 e2e_test_action.e2e_test_params = e2e_test_params
                 e2e_test_action.save()
+                # Show empty form after submit
+                #....
 
         # Redirect instead of render to avoid multiple submissions on page refresh
         return redirect(reverse('add-e2e-test'))
