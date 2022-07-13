@@ -11,7 +11,7 @@
                 <small id="emailHelp" class="form-text text-muted">Some text.</small>
             </div>  
         <hr />
-        <div class="row">
+        <div id="action-forms" class="row">
             {{ e2e_test_action__formset.management_form }}
             {% for form in e2e_test_action__formset %}
             <div id="action-form-{{ forloop.counter0 }}" class="action-form card" style="width: 18rem;margin:5px;">
@@ -19,10 +19,15 @@
                     <h4 class="action-title card-title">Action {{ forloop.counter }}</h4>
                     {{ form.as_p }}
                     {% if forloop.last %}
-                        {% comment %} "Add New Action" button should be only on the last form {% endcomment %}
-                        <button id="add-action-btn" type="button" class="btn btn-success add-form-row">Add New Action</button>
+                        {% comment %} "Add New Action" button should only apear on the last form {% endcomment %}
+                        <button type="button" class="btn btn-danger remove-form-row">
+                            <span class="glyphicon glyphicon-minus" aria-hidden="true">REMOVE</span>
+                        </button>
+                        <button type="button" class="btn btn-success add-form-row">NEW</button>
                     {% else %}
-                        <button id="remove-action-btn" type="button" class="btn btn-danger remove-form-row">DELETE</button>
+                        <button type="button" class="btn btn-danger remove-form-row">
+                            <span class="glyphicon glyphicon-minus" aria-hidden="true">REMOVE</span>
+                        </button>
                     {% endif %}
                 </div>    
             </div>
@@ -40,6 +45,6 @@
 </div>
 
 {% load static %}
-<script src="{% static 'js/test-events.js' %}"></script>
+<script src="{% static 'js/formset-logic.js' %}"></script>
 
 {% endblock content %}
