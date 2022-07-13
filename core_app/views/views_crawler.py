@@ -95,8 +95,6 @@ class AddE2ETestView(LoginRequiredMixin, View):
                 e2e_test_action = form.save(commit=False)
                 e2e_test_action.e2e_test_params = e2e_test_params
                 e2e_test_action.save()
-                # Show empty form after submit
-                #....
 
         # Redirect instead of render to avoid multiple submissions on page refresh
         return redirect(reverse('add-e2e-test'))
@@ -113,14 +111,19 @@ class EditE2ETestView(LoginRequiredMixin, View):
         # Get the chosen e2e-test with its current settings (fields)
         pk = self.kwargs.get('pk')
         e2e_test = E2ETestParamsModel.objects.get(pk=pk)
+        e2e_test_actions = E2ETestActionModel.objects.filter(e2e_test_params=e2e_test)#.order_by('-created'))
 
         # instance=e2e_test will load the requested e2e-test form
         # with pre-filled fields.
-        e2e_test_params__form = E2ETestParamsForm(instance=e2e_test) 
+        e2e_test_params__form = E2ETestParamsForm(instance=e2e_test)
+        e2e_test_action__formset = E2ETestActionFormset(queryset=e2e_test_actions)
 
         context = {
             'e2e_test': e2e_test,
             'e2e_test_params__form': e2e_test_params__form,
+            'e2e_test_actions': e2e_test_actions,
+            'e2e_test_action__formset': e2e_test_action__formset,
+
         }
         return render(request, EDIT_TEST_TEMPLATE, context)
 
@@ -142,30 +145,39 @@ class EditE2ETestView(LoginRequiredMixin, View):
 
         # Create a database-entry object
         e2e_test_params__form = E2ETestParamsForm(request.POST, instance=e2e_test) 
-        
-        # POST the entry to database
-        if e2e_test_params__form.is_valid():
-            # TASK: Add a boolean to trigger a successful message as feedback
-            e2e_test_params__form.launches_per_day = request.POST.get('launches_per_day')
-            if type(request.POST.get('start_date')) is type(DateField):
-                e2e_test_params__form.start_date = request.POST.get('start_date')
-            if type(request.POST.get('end_date')) is type(DateField):
-                e2e_test_params__form.end_date = request.POST.get('end_date')
-            e2e_test_params__form.end_date = request.POST.get('end_date')
-            e2e_test_params__form.save()
+        e2e_test_action__formset = E2ETestActionFormset(request.POST)
 
-        # Get the according Celery task from beat's PeriodicTask table & update
-        periodic_task = PeriodicTask.objects.get(pk=e2e_test.periodic_task.id)
-        # Update values in the Celery task
-        periodic_task.enabled = True if request.POST.get('enabled') == "on" else False
-        periodic_task.interval = schedule
-        periodic_task.expires =  None if request.POST.get('end_date') == "" else request.POST.get('end_date')
-        periodic_task.args = json.dumps([request.POST.get('url')])
-        periodic_task.save()
+        # POST the entry to database
+        if e2e_test_params__form.is_valid() and e2e_test_action__formset.is_valid():
+
+            # Get the according Celery task from beat's PeriodicTask table
+            periodic_task = PeriodicTask.objects.get(pk=e2e_test.periodic_task.id)
+            # Update values in the Celery task
+            periodic_task.enabled = True if request.POST.get('enabled') == "on" else False
+            periodic_task.interval = schedule
+            periodic_task.expires =  None if request.POST.get('end_date') == "" else request.POST.get('end_date')
+            periodic_task.args = json.dumps([request.POST.get('url')])
+            periodic_task.save()
+
+            # TASK: Add a boolean to trigger a successful message as feedback
+            e2e_test_params = e2e_test_params__form.save(commit=False)
+            e2e_test_params.launches_per_day = request.POST.get('launches_per_day')
+            if type(request.POST.get('start_date')) is type(DateField):
+                e2e_test_params.start_date = request.POST.get('start_date')
+            if type(request.POST.get('end_date')) is type(DateField):
+                e2e_test_params.end_date = request.POST.get('end_date')
+            e2e_test_params.end_date = request.POST.get('end_date')
+            e2e_test_params.save()
+
+            for form in e2e_test_action__formset:
+                e2e_test_action = form.save(commit=False)
+                e2e_test_action.e2e_test_params = e2e_test_params
+                e2e_test_action.save()
 
         context = {
             'e2e_test': e2e_test,
             'e2e_test_params__form': e2e_test_params__form,
+            'e2e_test_action__formset': e2e_test_action__formset
             # TASK: Add a boolean to trigger a successful message as feedback
         }
 
