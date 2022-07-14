@@ -97,8 +97,14 @@ class E2ETestParamsForm(forms.ModelForm):
         widgets = {
             'url': forms.URLInput(attrs={'class': 'form-control'}),
             'launches_per_day': forms.NumberInput(attrs={'class': 'form-control'}), 
-            'start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}), 
-            'end_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}), 
+            'start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            # Allow end_date to be empty 
+            'end_date': forms.DateInput(attrs={'class': 'form-control',  
+                                                'name': 'date', 'type': 
+                                                'text', 'placeholder': 
+                                                'Leave empty if not applicable', 
+                                                'onfocus': '(this.type="date")', 
+                                                'onfocusout': '(this.type="text")'}), 
                 }
                 
         # Should not allow to edit fields:
@@ -120,8 +126,7 @@ class E2ETestActionForm(forms.ModelForm):
                                                         }),
             'css_selector_click': forms.TextInput(attrs={'class': 'form-control', 
                                                         # 'required': 'required', 
-                                                        'placeholder': 
-                                                        'example: #element_id'
+                                                        'placeholder': 'example: #element_id'
                                                         }),
         }
 
