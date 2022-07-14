@@ -105,33 +105,61 @@ class E2ETestParamsForm(forms.ModelForm):
         exclude = ['pk', 'periodic_task']
 
 
-E2ETestActionFormset = modelformset_factory(
-    E2ETestActionModel,
-    fields=('event_type', 'wait_time_in_sec', 'css_selector_click',),
+class E2ETestActionForm(forms.ModelForm):
+    class Meta:
+        model = E2ETestActionModel
+        fields = ['event_type', 'wait_time_in_sec', 'css_selector_click',]
+
+        # Style with Bootstrap
+        widgets={
+            'event_type': forms.Select(attrs={'class': 'form-control',}),
+            'wait_time_in_sec': forms.NumberInput(attrs={
+                                                        'class': 'form-control', 
+                                                        # 'required': 'required', 
+                                                        'placeholder': ''
+                                                        }),
+            'css_selector_click': forms.TextInput(attrs={'class': 'form-control', 
+                                                        # 'required': 'required', 
+                                                        'placeholder': 
+                                                        'example: #element_id'
+                                                        }),
+        }
+
+
+E2ETestActionFormsetCreate = modelformset_factory(
+    model=E2ETestActionModel,
+    form=E2ETestActionForm,
     extra=1,
     min_num=0, 
     validate_min=True,
     max_num=7,
     validate_max=True,
-    widgets={
-        'event_type': forms.Select(attrs={'class': 'form-control',}),
-        'wait_time_in_sec': forms.NumberInput(attrs={
-                                                    'class': 'form-control', 
-                                                    # 'required': 'required', 
-                                                    'placeholder': ''
-                                                    }),
-        'css_selector_click': forms.TextInput(attrs={'class': 'form-control', 
-                                                    # 'required': 'required', 
-                                                    'placeholder': 
-                                                    'example: #element_id'
-                                                    }),
-    }
 )
 
-class E2ETestActionFormsetValidation(E2ETestActionFormset):
+
+E2ETestActionFormsetEdit = modelformset_factory(
+    model=E2ETestActionModel,
+    form=E2ETestActionForm,
+    extra=0,    # on edit, do not add new fields
+    min_num=0, 
+    validate_min=True,
+    max_num=7,
+    validate_max=True,
+)
+
+class E2ETestActionFormsetCreateValidation(E2ETestActionFormsetCreate):
     # Since formsets are allowed to be empty, when using required fields
     # a manual validation must be performed.
     def __init__(self, *args, **kwargs):
-        super(E2ETestActionFormsetValidation, self).__init__(*args, **kwargs)
+        super(E2ETestActionFormsetCreateValidation, self).__init__(*args, **kwargs)
+        for form in self.forms:
+            form.empty_permitted = False
+
+
+class E2ETestActionFormsetEditValidation(E2ETestActionFormsetEdit):
+    # Since formsets are allowed to be empty, when using required fields
+    # a manual validation must be performed.
+    def __init__(self, *args, **kwargs):
+        super(E2ETestActionFormsetEditValidation, self).__init__(*args, **kwargs)
         for form in self.forms:
             form.empty_permitted = False
