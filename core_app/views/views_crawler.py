@@ -101,6 +101,9 @@ class AddE2ETestView(LoginRequiredMixin, View):
                 e2e_test_action.save()
 
             messages.success(request, 'Created successfully.')
+            # Clear the forms after a successful creation
+            e2e_test_params__form = E2ETestParamsForm(request.GET or None)
+            e2e_test_action__formset = E2ETestActionFormset(queryset=E2ETestActionModel.objects.none())
         else:
             messages.error(request, 'Please fix the issues below.')
 
