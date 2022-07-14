@@ -46,6 +46,9 @@ class AddE2ETestView(LoginRequiredMixin, View):
         return render(request, ADD_TEST_TEMPLATE, context)
 
     def post(self, request, *args, **kwargs):
+        # Show all scheduled e2e-tests
+        all_scheduled_tests = E2ETestParamsModel.objects.filter(user=request.user).order_by('-created')
+
         # Will be used to name the tests in the database with incremental numbers
         user_test_count = E2ETestParamsModel.objects.filter(user=request.user).__len__()
 
@@ -58,9 +61,9 @@ class AddE2ETestView(LoginRequiredMixin, View):
             period=IntervalSchedule.MICROSECONDS,
         )
 
-        # Create a database-entry object
+        # Create database-entry object
         e2e_test_params__form = E2ETestParamsForm(request.POST)
-        e2e_test_action__formset = E2ETestActionFormset(request.POST)
+        e2e_test_action__formset = E2ETestActionFormsetValidation(request.POST)
 
         # POST the entry to database
         if e2e_test_params__form.is_valid() and e2e_test_action__formset.is_valid():
@@ -96,8 +99,14 @@ class AddE2ETestView(LoginRequiredMixin, View):
                 e2e_test_action.e2e_test_params = e2e_test_params
                 e2e_test_action.save()
 
-        # Redirect instead of render to avoid multiple submissions on page refresh
-        return redirect(reverse('add-e2e-test'))
+        context = {
+            'all_scheduled_tests': all_scheduled_tests,
+            'e2e_test_params__form': e2e_test_params__form,
+            'e2e_test_action__formset': e2e_test_action__formset
+            # TASK: Add a boolean to trigger a successful message as feedback
+        }
+
+        return render(request, ADD_TEST_TEMPLATE, context)
 
 
 class EditE2ETestView(LoginRequiredMixin, View):
@@ -143,7 +152,7 @@ class EditE2ETestView(LoginRequiredMixin, View):
             period=IntervalSchedule.MICROSECONDS,
         )
 
-        # Create a database-entry object
+        # Create database-entry object
         e2e_test_params__form = E2ETestParamsForm(request.POST, instance=e2e_test) 
         e2e_test_action__formset = E2ETestActionFormsetValidation(request.POST)
 

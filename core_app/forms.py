@@ -109,7 +109,7 @@ E2ETestActionFormset = modelformset_factory(
     E2ETestActionModel,
     fields=('event_type', 'wait_time_in_sec', 'css_selector_click',),
     extra=1,
-    min_num=3, 
+    min_num=0, 
     validate_min=True,
     max_num=7,
     validate_max=True,
@@ -117,11 +117,11 @@ E2ETestActionFormset = modelformset_factory(
         'event_type': forms.Select(attrs={'class': 'form-control',}),
         'wait_time_in_sec': forms.NumberInput(attrs={
                                                     'class': 'form-control', 
-                                                    'required': 'required', 
+                                                    # 'required': 'required', 
                                                     'placeholder': ''
                                                     }),
         'css_selector_click': forms.TextInput(attrs={'class': 'form-control', 
-                                                    'required': 'required', 
+                                                    # 'required': 'required', 
                                                     'placeholder': 
                                                     'example: #element_id'
                                                     }),
