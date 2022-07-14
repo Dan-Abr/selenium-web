@@ -109,10 +109,29 @@ E2ETestActionFormset = modelformset_factory(
     E2ETestActionModel,
     fields=('event_type', 'wait_time_in_sec', 'css_selector_click',),
     extra=1,
+    min_num=3, 
+    validate_min=True,
     max_num=7,
+    validate_max=True,
     widgets={
         'event_type': forms.Select(attrs={'class': 'form-control',}),
-        'wait_time_in_sec': forms.NumberInput(attrs={'class': 'form-control','placeholder': '-----'}),
-        'css_selector_click': forms.TextInput(attrs={'class': 'form-control','placeholder': '-----'}),
+        'wait_time_in_sec': forms.NumberInput(attrs={
+                                                    'class': 'form-control', 
+                                                    'required': 'required', 
+                                                    'placeholder': ''
+                                                    }),
+        'css_selector_click': forms.TextInput(attrs={'class': 'form-control', 
+                                                    'required': 'required', 
+                                                    'placeholder': 
+                                                    'example: #element_id'
+                                                    }),
     }
 )
+
+class E2ETestActionFormsetValidation(E2ETestActionFormset):
+    # Since formsets are allowed to be empty, when using required fields
+    # a manual validation must be performed.
+    def __init__(self, *args, **kwargs):
+        super(E2ETestActionFormsetValidation, self).__init__(*args, **kwargs)
+        for form in self.forms:
+            form.empty_permitted = False

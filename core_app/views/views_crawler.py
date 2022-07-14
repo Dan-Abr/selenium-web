@@ -116,7 +116,7 @@ class EditE2ETestView(LoginRequiredMixin, View):
         # instance=e2e_test will load the requested e2e-test form
         # with pre-filled fields.
         e2e_test_params__form = E2ETestParamsForm(instance=e2e_test)
-        e2e_test_action__formset = E2ETestActionFormset(queryset=e2e_test_actions)
+        e2e_test_action__formset = E2ETestActionFormsetValidation(queryset=e2e_test_actions)
 
         context = {
             'e2e_test': e2e_test,
@@ -145,7 +145,7 @@ class EditE2ETestView(LoginRequiredMixin, View):
 
         # Create a database-entry object
         e2e_test_params__form = E2ETestParamsForm(request.POST, instance=e2e_test) 
-        e2e_test_action__formset = E2ETestActionFormset(request.POST)
+        e2e_test_action__formset = E2ETestActionFormsetValidation(request.POST)
 
         # POST the entry to database
         if e2e_test_params__form.is_valid() and e2e_test_action__formset.is_valid():
