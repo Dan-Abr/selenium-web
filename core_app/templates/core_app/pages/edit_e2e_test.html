@@ -2,7 +2,16 @@
 
 {% block content %}
 <div class="mt-5 py-5">
-
+    {% if messages %}
+            {% for message in messages %}
+                {% if message.level == 25 %}
+                    <ul class="alert alert-success"> {{ message }}</ul>
+                {% endif %}
+                {% if message.level > 25 %}
+                    <ul class="alert alert-danger"> {{ message }}</ul>
+                {% endif %}
+            {% endfor %}
+    {% endif %}
     <form id="e2e_test_params__form" class="form-horizontal" action="{% url 'edit-e2e-test' e2e_test.id %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             

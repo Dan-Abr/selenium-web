@@ -9,6 +9,7 @@ from django.views import View, generic
 from django_celery_beat.models import PeriodicTask, IntervalSchedule
 from django.forms import DateField
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 
 # local Django
 from ..forms import *
@@ -99,6 +100,10 @@ class AddE2ETestView(LoginRequiredMixin, View):
                 e2e_test_action.e2e_test_params = e2e_test_params
                 e2e_test_action.save()
 
+            messages.success(request, 'Created successfully.')
+        else:
+            messages.error(request, 'Please fix the issues below.')
+
         context = {
             'all_scheduled_tests': all_scheduled_tests,
             'e2e_test_params__form': e2e_test_params__form,
@@ -182,6 +187,10 @@ class EditE2ETestView(LoginRequiredMixin, View):
                 e2e_test_action = form.save(commit=False)
                 e2e_test_action.e2e_test_params = e2e_test_params
                 e2e_test_action.save()
+
+            messages.success(request, 'Updated successfully.')
+        else:
+            messages.error(request, 'Please fix the issues below.')
 
         context = {
             'e2e_test': e2e_test,
