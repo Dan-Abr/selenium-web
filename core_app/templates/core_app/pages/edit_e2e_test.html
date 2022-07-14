@@ -46,7 +46,8 @@
 
         <div class="row spacer">
             <div class="col-4">
-                <button onclick="location.href='{% url "add-e2e-test" %}'" type="button" class="btn btn-block btn-secondary">Cancel</button>
+                <button type="button" onclick="location.href='{% url "add-e2e-test" %}'" class="btn btn-block btn-secondary">Cancel</button>
+                <button type="button" onclick='location.href="{% url 'delete-e2e-test' e2e_test.id %}"' class="btn btn-block btn-danger">Delete</button>
                 <button type="submit" class="btn btn-block btn-primary">Update</button>
             </div>
         </div>
