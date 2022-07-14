@@ -18,7 +18,7 @@ function cloneMore(selector, prefix) {
     var newForm = $(selector).clone(true);
     // If there is only one form, create a REMOVE button (total == 1) for the NEW.
     if(total == 1){
-        remove_form_btn = $("<button>", {"type": "button", "class": "btn btn-danger remove-form-row"}).text("REMOVE")
+        remove_form_btn = $("<button>", {"type": "button", "class": "btn btn-danger remove-form-row"}).text("-")
         // Create the REMOVE button after the NEW button
         newForm.find('.card-body').find('.add-form-row').before(remove_form_btn)
     }
@@ -56,7 +56,7 @@ function cloneMore(selector, prefix) {
     allFormsExceptLast.find('.btn.add-form-row')
     .removeClass('btn-success').addClass('btn-danger')
     .removeClass('add-form-row').addClass('remove-form-row')
-    .html('<span class="glyphicon glyphicon-minus" aria-hidden="true">REMOVE</span>');
+    .html('<span class="glyphicon glyphicon-minus" aria-hidden="true">-</span>');
 
     // Update the title with the right number
     newForm.find('.action-title').html('Action' + ' ' + total)
@@ -79,7 +79,7 @@ function deleteForm(prefix, btn) {
         // If it already has a NEW button, don't add another one.
         // Check for length since it also returns the previous object and hence not undefined.
         if(new_form_btn.length == 0){
-            new_form_btn = $("<button>", {"type": "button", "class": "btn btn-success add-form-row"}).text("NEW")
+            new_form_btn = $("<button>", {"type": "button", "class": "btn btn-success add-form-row"}).text("+")
             last_form.append(new_form_btn);
         }
 

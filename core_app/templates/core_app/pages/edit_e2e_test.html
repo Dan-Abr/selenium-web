@@ -21,12 +21,12 @@
                     {% if forloop.last %}
                         {% comment %} "Add New Action" button should only apear on the last form {% endcomment %}
                         <button type="button" class="btn btn-danger remove-form-row">
-                            <span class="glyphicon glyphicon-minus" aria-hidden="true">REMOVE</span>
+                            <span class="glyphicon glyphicon-minus" aria-hidden="true">-</span>
                         </button>
-                        <button type="button" class="btn btn-success add-form-row">NEW</button>
+                        <button type="button" class="btn btn-success add-form-row">+</button>
                     {% else %}
                         <button type="button" class="btn btn-danger remove-form-row">
-                            <span class="glyphicon glyphicon-minus" aria-hidden="true">REMOVE</span>
+                            <span class="glyphicon glyphicon-minus" aria-hidden="true">-</span>
                         </button>
                     {% endif %}
                 </div>    
