@@ -82,8 +82,9 @@
                 <td>{{ item.start_date }}</td>
                 <td>{{ item.end_date }}</td>
                 <td>{{ item.enabled }}</td>
-                <td><a class="page-link" href="{% url 'edit-e2e-test' item.id %}">Edit</a></td>
-                <td><a class="page-link" href="{% url 'delete-e2e-test' item.id %}">Delete</a></td>
+                <td><button type="button" onclick='location.href="{% url 'edit-e2e-test' item.id %}"' class="btn btn-block btn-primary">Edit</button></td>
+                <td><button type="button" onclick='location.href="{% url 'delete-e2e-test' item.id %}"' class="btn btn-block btn-danger">Delete</button></td>
+
             </tr>
             {% endfor %}
         </tbody>
