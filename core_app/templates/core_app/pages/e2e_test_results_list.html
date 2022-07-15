@@ -21,7 +21,13 @@
                     <p>{{ item.url }}</p>
                 </td>
                 <td>{{ item.page_title }}</td>
-                <td>{{ item.status }}</td>
+                <td>
+                    {% if item.status == 'Success' %}
+                        <button type="button" class="btn btn-success disabled">Success</button>
+                    {% else %}
+                        <button type="button" class="btn btn-danger disabled">Failed</button>                        
+                    {% endif %}
+                </td>
                 <td>{{ item.created }}</td>
             </tr>
             {% endfor %}

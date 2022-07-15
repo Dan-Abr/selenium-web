@@ -111,39 +111,4 @@
 {% load static %}
 <script src="{% static 'js/formset-logic.js' %}"></script>
 
-<!-- <script> 
-    // test
-    const addActionBtn = document.getElementById('add-action-btn')
-    const totalNewForms = document.getElementById('id_form-TOTAL_FORMS')
-
-    addActionBtn.addEventListener('click', add_action_form)
-
-    function add_action_form(event){
-        if(event){
-            // Prevent from "add-action" button to submit forms
-            event.preventDefault()
-            
-            // Add new form
-            const actionFormsDiv = document.getElementById('action-forms')
-            const allActionForms = document.getElementsByClassName('action-form')
-            const copyActionFormElement = document.getElementById('action-form-0').cloneNode(true)
-
-            copyActionFormElement.setAttribute('class', 'action-form')
-            copyActionFormElement.setAttribute('id', `action-form-${allActionForms.length}`)
-
-            // Properly rename the new form's labels
-            const regex = new RegExp('__prefix__', 'g')
-            copyActionFormElement.innerHTML = copyActionFormElement.innerHTML.replace(regex, allActionForms.length)
-            
-            totalNewForms.setAttribute('value', allActionForms.length+1)
-            actionFormsDiv.append(copyActionFormElement)
-            
-            // Add the same class to the delete button and update the number of forms
-            // ...
-
-
-        }
-    }
-</script> -->
-
 {% endblock content %}
