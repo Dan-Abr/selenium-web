@@ -23,9 +23,9 @@
                 <td>{{ item.page_title }}</td>
                 <td>
                     {% if item.status == 'Success' %}
-                        <button type="button" class="btn btn-success disabled">Success</button>
+                        <span class="badge alert-success">Success</span>
                     {% else %}
-                        <button type="button" class="btn btn-danger disabled">Failed</button>                        
+                        <span class="badge alert-dark">Failed</span>
                     {% endif %}
                 </td>
                 <td>{{ item.created }}</td>

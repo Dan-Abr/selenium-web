@@ -172,7 +172,7 @@ class EditE2ETestView(LoginRequiredMixin, View):
             # Update values in the Celery task
             periodic_task.enabled = True if request.POST.get('enabled') == "on" else False
             periodic_task.interval = schedule
-            periodic_task.expires =  None if request.POST.get('end_date') == "" else request.POST.get('end_date')
+            periodic_task.expires = None if request.POST.get('end_date') == "" else request.POST.get('end_date')
             periodic_task.args = json.dumps([request.POST.get('url')])
             periodic_task.save()
 
@@ -183,7 +183,6 @@ class EditE2ETestView(LoginRequiredMixin, View):
                 e2e_test_params.start_date = request.POST.get('start_date')
             if type(request.POST.get('end_date')) is type(DateField):
                 e2e_test_params.end_date = request.POST.get('end_date')
-            e2e_test_params.end_date = request.POST.get('end_date')
             e2e_test_params.save()
 
             for form in e2e_test_action__formset:

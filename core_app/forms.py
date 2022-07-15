@@ -100,11 +100,12 @@ class E2ETestParamsForm(forms.ModelForm):
             'start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             # Allow end_date to be empty 
             'end_date': forms.DateInput(attrs={'class': 'form-control',  
-                                                'name': 'date', 'type': 
-                                                'text', 'placeholder': 
-                                                'Leave empty if not applicable', 
+                                                'name': 'date', 
+                                                'type': 'text', 
+                                                'placeholder': 'Leave empty if not applicable', 
                                                 'onfocus': '(this.type="date")', 
-                                                'onfocusout': '(this.type="text")'}), 
+                                                'onfocusout': '(this.type="text")'
+                                                }), 
                 }
                 
         # Should not allow to edit fields:
