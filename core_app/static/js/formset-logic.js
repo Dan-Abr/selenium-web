@@ -13,54 +13,64 @@ function updateFormIndex(form, prefix, ndx) {
 function cloneMore(selector, prefix) {
     var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
 
-    // Copy the last form as it is with a REMOVE button so the newly
-    // created from will already have a REMOVE button.
+    // Copy the last form as it is with a MINUS button so the newly
+    // created from will already have a MINUS button.
     var newForm = $(selector).clone(true);
-    // If there is only one form, create a REMOVE button (total == 1) for the NEW.
-    if(total == 1){
-        remove_form_btn = $("<button>", {"type": "button", "class": "btn btn-danger remove-form-row"}).text("-")
-        // Create the REMOVE button after the NEW button
-        newForm.find('.card-body').find('.add-form-row').before(remove_form_btn)
-    }
 
-    // Prevent duplicate REMOVE buttons after duplications.
-    var remove_form_btn = $(selector).find('.card-body').find('.remove-form-row')
-    if(remove_form_btn != undefined){
-        $(selector).find('.card-body').find('.remove-form-row').remove();
-    }
+    // Max of 7 forms
+    if(total < 7){
 
-    // Update the form component's indices
-    newForm.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function() {
-        if ($(this).attr('name')){
-            var name = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
-            var id = 'id_' + name;
-            $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
+        // If there is only one form, create a MINUS button (total == 1) after cloning it
+        // since it doesn't have this button.
+        if(total == 1){
+            form_btn_minus = $("<button>", {"type": "button", "class": "btn btn-danger remove-form-row"}).text("-")
+            // Create the MINUS button after the PLUS button
+            newForm.find('.card-body').find('.add-form-row').before(form_btn_minus)
         }
-    });
 
-    // Update the form labels' indices
-    newForm.find('label').each(function() {
-        var forValue = $(this).attr('for');
-        if (forValue) {
-          forValue = forValue.replace('-' + (total-1) + '-', '-' + total + '-');
-          $(this).attr({'for': forValue});
+        // Prevent duplicate MINUS buttons after duplications.
+        var form_btn_minus = $(selector).find('.card-body').find('.remove-form-row')
+        if(form_btn_minus != undefined){
+            $(selector).find('.card-body').find('.remove-form-row').remove();
         }
-    });
 
-    total++;
-    $('#id_' + prefix + '-TOTAL_FORMS').val(total);
-    $(selector).after(newForm);
-    var allFormsExceptLast = $('.action-form:not(:last)');
+        // Update the form component's indices
+        newForm.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function() {
+            if ($(this).attr('name')){
+                var name = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
+                var id = 'id_' + name;
+                $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
+            }
+        });
 
-    // Replace the NEW button with a REMOVE button
-    allFormsExceptLast.find('.btn.add-form-row')
-    .removeClass('btn-success').addClass('btn-danger')
-    .removeClass('add-form-row').addClass('remove-form-row')
-    .html('<span class="glyphicon glyphicon-minus" aria-hidden="true">-</span>');
+        // Update the form labels' indices
+        newForm.find('label').each(function() {
+            var forValue = $(this).attr('for');
+            if (forValue) {
+            forValue = forValue.replace('-' + (total-1) + '-', '-' + total + '-');
+            $(this).attr({'for': forValue});
+            }
+        });
 
-    // Update the title with the right number
-    newForm.find('.action-title').html('Action' + ' ' + total)
+        total++;
+        $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+        $(selector).after(newForm);
+        var allFormsExceptLast = $('.action-form:not(:last)');
 
+        // Replace the PLUS button with a MINUS button
+        allFormsExceptLast.find('.btn.add-form-row')
+        .removeClass('btn-success').addClass('btn-danger')
+        .removeClass('add-form-row').addClass('remove-form-row')
+        .html('<span class="glyphicon glyphicon-minus" aria-hidden="true">-</span>');
+
+        // Update the title with the right number
+        newForm.find('.action-title').html('Action' + ' ' + total)
+    }
+    if(total == 7){
+        // Remove the PLUS button on the 7th form
+        newForm.find('.btn.add-form-row').remove()
+
+    }
     return false;
 }
 
@@ -73,14 +83,14 @@ function deleteForm(prefix, btn) {
         // Delete the last form
         btn.closest('.action-form').remove();
 
-        // Add the NEW button to the newest last form 
+        // Add the PLUS button to the newest last form 
         var last_form = $('.action-form:last').find('.card-body')
-        var new_form_btn = last_form.find('.add-form-row')
-        // If it already has a NEW button, don't add another one.
+        var form_btn_plus = last_form.find('.add-form-row')
+        // If it already has a PLUS button, don't add another one.
         // Check for length since it also returns the previous object and hence not undefined.
-        if(new_form_btn.length == 0){
-            new_form_btn = $("<button>", {"type": "button", "class": "btn btn-success add-form-row"}).text("+")
-            last_form.append(new_form_btn);
+        if(form_btn_plus.length == 0){
+            form_btn_plus = $("<button>", {"type": "button", "class": "btn btn-success add-form-row"}).text("+")
+            last_form.append(form_btn_plus);
         }
 
         // Update the form component's indices
@@ -94,7 +104,7 @@ function deleteForm(prefix, btn) {
         }
     }
     // After the deletion of the form above (total == 2), if only one form left
-    // it shouldn't have a REMOVE button.
+    // it shouldn't have a MINUS button.
     if(total == 2){
         var form = $('.action-form:first')
         form.find('.card-body').find('.remove-form-row').remove();
