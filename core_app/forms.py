@@ -61,14 +61,6 @@ class UserPasswordChangeForm(PasswordChangeForm):
             'new_password2': forms.PasswordInput(attrs={'class': 'form-control', 'type': 'password'}),
             }
 
-# class UserChangePasswordForm(PasswordChangeForm):
-#     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
-
-#     class Meta:
-#         model = User
-#         fields = ['email']
-#         exclude = ['username', 'password1', 'password2']
-
 
 class UserLoginForm(forms.Form):
     username = forms.CharField(max_length=63)
@@ -76,14 +68,10 @@ class UserLoginForm(forms.Form):
 
 
 class E2ETestParamsForm(forms.ModelForm):
-    # start_date = forms.DateField(widget=AdminDateWidget())
-    # start_time = forms.SplitDateTimeField(widget=AdminSplitDateTime())
-
     def __init__(self, *args, **kwargs):
         # Label with uppercase 
         super(E2ETestParamsForm, self).__init__(*args, **kwargs)
         self.fields['url'].label = "URL"
-        
         # Do not allow edit 'start_date' once it was set
         instance = getattr(self, 'instance', None)
         if instance and instance.pk:
@@ -92,7 +80,6 @@ class E2ETestParamsForm(forms.ModelForm):
     class Meta:
         model = E2ETestParamsModel
         fields = ['url', 'launches_per_day', 'start_date', 'end_date', 'enabled']
-
         # Style with Bootstrap
         widgets = {
             'url': forms.URLInput(attrs={'class': 'form-control'}),
@@ -106,20 +93,23 @@ class E2ETestParamsForm(forms.ModelForm):
                                                 'onfocus': '(this.type="date")', 
                                                 'onfocusout': '(this.type="text")'
                                                 }), 
-                }
-                
+                }         
         # Should not allow to edit fields:
         exclude = ['pk', 'periodic_task']
 
 
 class E2ETestActionForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        # Label with uppercase 
+        super(E2ETestActionForm, self).__init__(*args, **kwargs)
+        self.fields['css_selector_click'].label = "CSS Selector Click"
+
     class Meta:
         model = E2ETestActionModel
         fields = ['event_type', 'wait_time_in_sec', 'css_selector_click',]
-
         # Style with Bootstrap
         widgets={
-            'event_type': forms.Select(attrs={'class': 'form-control',}),
+            'event_type': forms.Select(attrs={'class': 'form-control action-type',}),
             'wait_time_in_sec': forms.NumberInput(attrs={
                                                         'class': 'form-control', 
                                                         # 'required': 'required', 
@@ -152,6 +142,7 @@ E2ETestActionFormsetEdit = modelformset_factory(
     max_num=7,
     validate_max=True,
 )
+
 
 class E2ETestActionFormsetCreateValidation(E2ETestActionFormsetCreate):
     # Since formsets are allowed to be empty, when using required fields
