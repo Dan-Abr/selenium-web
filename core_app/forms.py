@@ -129,6 +129,8 @@ E2ETestActionFormsetCreate = modelformset_factory(
     validate_min=True,
     max_num=7,
     validate_max=True,
+    can_delete=True,
+    can_delete_extra=True,
 )
 
 
@@ -140,6 +142,8 @@ E2ETestActionFormsetEdit = modelformset_factory(
     validate_min=True,
     max_num=7,
     validate_max=True,
+    can_delete=True,
+    can_delete_extra=True,
 )
 
 
@@ -150,6 +154,9 @@ class E2ETestActionFormsetCreateValidation(E2ETestActionFormsetCreate):
         super(E2ETestActionFormsetCreateValidation, self).__init__(*args, **kwargs)
         for form in self.forms:
             form.empty_permitted = False
+    def clear(self):
+        if any(self.errors):
+            return
 
 
 class E2ETestActionFormsetEditValidation(E2ETestActionFormsetEdit):
@@ -159,3 +166,7 @@ class E2ETestActionFormsetEditValidation(E2ETestActionFormsetEdit):
         super(E2ETestActionFormsetEditValidation, self).__init__(*args, **kwargs)
         for form in self.forms:
             form.empty_permitted = False
+    
+    def clear(self):
+        if any(self.errors):
+            return

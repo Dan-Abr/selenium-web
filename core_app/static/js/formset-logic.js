@@ -120,57 +120,57 @@ function deleteForm(prefix, btn) {
 // ---------------------------------------------------------------------------------
 // Update Forms' Fields (wait, click)
 // ---------------------------------------------------------------------------------
-// var waitTimeField = 'wait_time_in_sec';
-// var cssSelectorField = 'css_selector_click'
-// var firstActionFormId = '#action-form-0'
-// var actionFormClass = '.action-form'
+var waitTimeField = 'wait_time_in_sec';
+var cssSelectorField = 'css_selector_click'
+var firstActionFormId = '#action-form-0'
+var actionFormClass = '.action-form'
 
-// // On edit page, iterate all the existing action-forms and hide irrelevant fields.
-// $(document).ready(function(){
-//     $(document).find('.action-form').each(function() {
-//         var actionType = $(this).find('select').val()
-//         hideShowFormFields(this, actionType)
-//     });
-// });
-
-
-// // Helper function to hide/show relevant fields based on the user's choice.
-// function hideShowFormFields(form, selectedValue){
-//     form = $(form)
-//     switch (selectedValue) {
-//         case "1":
-//             // If the chosen action is 'Wait', hide unrelated fields
-//             form.closest('.action-form').find('input[id$='+waitTimeField+'], label[for$='+waitTimeField+']').each(function() {
-//                 $(this).show();
-//             });
-//             form.closest('.action-form').find('input[id$='+cssSelectorField+'], label[for$='+cssSelectorField+']').each(function() {
-//                 $(this).hide();
-//             });
-//             break;
-//         case "2":
-//             // If the chosen action is 'Click', hide unrelated fields
-//             form.closest('.action-form').find('input[id$='+cssSelectorField+'], label[for$='+cssSelectorField+']').each(function() {
-//                 $(this).show();
-//             });
-//             form.closest('.action-form').find('input[id$='+waitTimeField+'], label[for$='+waitTimeField+']').each(function() {
-//                 $(this).hide();
-//             });
-//             break;
-//     }
-// }
+// On edit page, iterate all the existing action-forms and hide irrelevant fields.
+$(document).ready(function(){
+    $(document).find('.action-form').each(function() {
+        var actionType = $(this).find('select').val()
+        hideShowFormFields(this, actionType)
+    });
+});
 
 
-// // On page load, set the first form with a 'Wait' action and hide any other field.
-// // This is for the page where the user creates new tests.
-// $(document).ready(function(){
-//         $(document).find(firstActionFormId).find('input[id$='+cssSelectorField+']').each(function() {
-//             // If the CSS selector field is empty hide it (not in edit mode)
-//             if(!$(this).val()){
-//                 $(document).find(firstActionFormId).find('label[for$='+cssSelectorField+']').hide();
-//                 $(this).hide();
-//             }
-//         });
-// });
+// Helper function to hide/show relevant fields based on the user's choice.
+function hideShowFormFields(form, selectedValue){
+    form = $(form)
+    switch (selectedValue) {
+        case "1":
+            // If the chosen action is 'Wait', hide unrelated fields
+            form.closest('.action-form').find('input[id$='+waitTimeField+'], label[for$='+waitTimeField+']').each(function() {
+                $(this).show();
+            });
+            form.closest('.action-form').find('input[id$='+cssSelectorField+'], label[for$='+cssSelectorField+']').each(function() {
+                $(this).hide();
+            });
+            break;
+        case "2":
+            // If the chosen action is 'Click', hide unrelated fields
+            form.closest('.action-form').find('input[id$='+cssSelectorField+'], label[for$='+cssSelectorField+']').each(function() {
+                $(this).show();
+            });
+            form.closest('.action-form').find('input[id$='+waitTimeField+'], label[for$='+waitTimeField+']').each(function() {
+                $(this).hide();
+            });
+            break;
+    }
+}
+
+
+// On page load, set the first form with a 'Wait' action and hide any other field.
+// This is for the page where the user creates new tests.
+$(document).ready(function(){
+        $(document).find(firstActionFormId).find('input[id$='+cssSelectorField+']').each(function() {
+            // If the CSS selector field is empty hide it (not in edit mode)
+            if(!$(this).val()){
+                $(document).find(firstActionFormId).find('label[for$='+cssSelectorField+']').hide();
+                $(this).hide();
+            }
+        });
+});
 
 
 
@@ -193,9 +193,9 @@ $(document).on('click', '.remove-form-row', function(e){
 });
 
 
-// // When the user change chooses action, update the form with
-// // the relevant fields for that action.
-// $('select').on('change', function(e) {
-//     hideShowFormFields(this, this.value);
-//     return false;
-// });
+// When the user change chooses action, update the form with
+// the relevant fields for that action.
+$('select').on('change', function(e) {
+    hideShowFormFields(this, this.value);
+    return false;
+});

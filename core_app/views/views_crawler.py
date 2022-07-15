@@ -188,6 +188,9 @@ class EditE2ETestView(LoginRequiredMixin, View):
                 e2e_test_action = form.save(commit=False)
                 e2e_test_action.e2e_test_params = e2e_test_params
                 e2e_test_action.save()
+            e2e_test_action__formset.save(commit=False)
+            for form in e2e_test_action__formset.deleted_objects:
+                form.delete()
 
             messages.success(request, 'Updated successfully.')
         else:
