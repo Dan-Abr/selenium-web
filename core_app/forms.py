@@ -109,14 +109,13 @@ class E2ETestActionForm(forms.ModelForm):
         fields = ['event_type', 'wait_time_in_sec', 'css_selector_click',]
         # Style with Bootstrap
         widgets={
-            'event_type': forms.Select(attrs={'class': 'form-control action-type',}),
+            'event_type': forms.Select(attrs={'class': 'form-control action-type',
+                                              'required': 'required',}),
             'wait_time_in_sec': forms.NumberInput(attrs={
                                                         'class': 'form-control', 
-                                                        # 'required': 'required', 
                                                         'placeholder': ''
                                                         }),
             'css_selector_click': forms.TextInput(attrs={'class': 'form-control', 
-                                                        # 'required': 'required', 
                                                         'placeholder': 'example: #element_id'
                                                         }),
         }

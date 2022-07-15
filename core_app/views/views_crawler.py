@@ -51,7 +51,7 @@ class AddE2ETestView(LoginRequiredMixin, View):
         all_scheduled_tests = E2ETestParamsModel.objects.filter(user=request.user).order_by('-created')
 
         # Will be used to name the tests in the database with incremental numbers
-        user_test_count = E2ETestParamsModel.objects.filter(user=request.user).__len__()
+        user_tests_count = E2ETestParamsModel.objects.filter(user=request.user).__len__()
 
         # Calculate form variables for the Celery task (& database storage)
         launches_per_day_raw = float(request.POST.get('launches_per_day'))
@@ -77,13 +77,13 @@ class AddE2ETestView(LoginRequiredMixin, View):
             periodic_task = PeriodicTask.objects.create(
                 enabled = True if request.POST.get('enabled') == "on" else False,
                 interval=schedule,
-                name=str(request.user)+'_e2e-test_'+str(user_test_count),
+                name=str(request.user)+'_e2e-test_'+str(user_tests_count),
                 task='core_app.tasks.call_crawl_website',
                 args=json.dumps([request.user.pk, request.POST.get('url')]),  # pass params for call_crawl_website()
                 kwargs=json.dumps({}),
                 start_time = request.POST.get('start_date'),
                 expires = None if request.POST.get('end_date') == "" else request.POST.get('end_date'),
-                #one_off=True
+                one_off=False,
             )
 
             e2e_test_params.user = request.user
@@ -111,7 +111,6 @@ class AddE2ETestView(LoginRequiredMixin, View):
             'all_scheduled_tests': all_scheduled_tests,
             'e2e_test_params__form': e2e_test_params__form,
             'e2e_test_action__formset': e2e_test_action__formset
-            # TASK: Add a boolean to trigger a successful message as feedback
         }
 
         return render(request, ADD_TEST_TEMPLATE, context)
@@ -198,7 +197,6 @@ class EditE2ETestView(LoginRequiredMixin, View):
             'e2e_test': e2e_test,
             'e2e_test_params__form': e2e_test_params__form,
             'e2e_test_action__formset': e2e_test_action__formset
-            # TASK: Add a boolean to trigger a successful message as feedback
         }
 
         return render(request, EDIT_TEST_TEMPLATE, context)
