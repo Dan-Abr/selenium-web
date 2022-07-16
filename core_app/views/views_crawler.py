@@ -127,7 +127,7 @@ class EditE2ETestView(LoginRequiredMixin, View):
         # Get the chosen e2e-test with its current settings (fields)
         pk = self.kwargs.get('pk')
         e2e_test = E2ETestParamsModel.objects.get(pk=pk)
-        e2e_test_actions = E2ETestActionModel.objects.filter(e2e_test_params=e2e_test)#.order_by('-created'))
+        e2e_test_actions = E2ETestActionModel.objects.filter(e2e_test_params=e2e_test)#.order_by('order'))
 
         # instance=e2e_test will load the requested e2e-test form
         # with pre-filled fields.
@@ -191,11 +191,16 @@ class EditE2ETestView(LoginRequiredMixin, View):
             e2e_test_action__formset.save(commit=False)
             for form in e2e_test_action__formset.deleted_objects:
                 form.delete()
-
             messages.success(request, 'Updated successfully.')
         else:
             messages.error(request, 'Please fix the issues below.')
 
+        # Retrieve the latest formset after POST
+        pk = self.kwargs.get('pk')
+        e2e_test_actions = E2ETestActionModel.objects.filter(e2e_test_params=e2e_test)#.order_by('order'))
+        e2e_test_params__form = E2ETestParamsForm(instance=e2e_test)
+        e2e_test_action__formset = E2ETestActionFormsetEditValidation(queryset=e2e_test_actions)
+        
         context = {
             'e2e_test': e2e_test,
             'e2e_test_params__form': e2e_test_params__form,

@@ -1,5 +1,4 @@
-// Source - https://medium.com/all-about-django/adding-forms-dynamically-to-a-django-formset-375f1090c2b0
-
+// Extension to - https://medium.com/all-about-django/adding-forms-dynamically-to-a-django-formset-375f1090c2b0
 
 // ---------------------------------------------------------------------------------
 // Clone & Delete Forms
@@ -9,6 +8,7 @@ var minForms = 1
 var editPage = 'edit'
 var createPage = 'add'
 var firstActionForm = 'form-0'
+var totalFormsOnLoad = parseInt($('#id_form-TOTAL_FORMS').val());
 
 
 function updateFormIndex(form, prefix, ndx) {
@@ -144,7 +144,6 @@ function deleteFormOnCreation(prefix, btn) {
 }
 
 
-var totalFormsOnLoad = parseInt($('#id_form-TOTAL_FORMS').val());
 function deleteFormOnEdit(prefix, btn) {
     var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
     var actionForm = btn.closest('.action-form');
@@ -190,6 +189,7 @@ function deleteFormOnEdit(prefix, btn) {
 var waitTimeField = 'wait_time_in_sec';
 var cssSelectorField = 'css_selector_click'
 var firstActionFormId = '#form-0'
+
 
 // On the edit page, iterate all the existing action-forms and hide irrelevant fields.
 $(document).ready(function(){
