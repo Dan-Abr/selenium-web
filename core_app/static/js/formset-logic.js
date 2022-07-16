@@ -8,7 +8,7 @@ var maxForms = 7
 var minForms = 1
 var editPage = 'edit'
 var createPage = 'add'
-var firstActionForm = 'action-form-0'
+var firstActionForm = 'form-0'
 
 
 function updateFormIndex(form, prefix, ndx) {
@@ -51,7 +51,7 @@ function cloneForm(selector, prefix) {
             $(selector).find('.card-body').find('.remove-form-row').remove();
         }
 
-        // Update the form inputs' indices
+        // Update the new form's inputs (indices)
         newForm.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function() {
             if ($(this).attr('name')){
                 var name = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
@@ -60,14 +60,19 @@ function cloneForm(selector, prefix) {
             }
         });
 
-        // Update the form labels' indices
+        // Update the new form's labels (indices)
         newForm.find('label').each(function() {
             var forValue = $(this).attr('for');
             if (forValue) {
-            forValue = forValue.replace('-' + (total-1) + '-', '-' + total + '-');
-            $(this).attr({'for': forValue});
+                forValue = forValue.replace('-' + (total-1) + '-', '-' + total + '-');
+                $(this).attr({'for': forValue});
             }
         });
+
+        // Update the new form's id
+        var formId = newForm.attr('id');
+        formId = formId.replace('-' + (total-1), '-' + total);
+        newForm.attr("id", formId)
 
         total++;
         $('#id_' + prefix + '-TOTAL_FORMS').val(total);
@@ -116,13 +121,16 @@ function deleteFormOnCreation(prefix, btn) {
             last_form.append(form_btn_plus);
         }
 
-        // Update the form component's indices
+        // Update the form components' indices
         var forms = $('.action-form');
         $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
         for (var i=0, formCount=forms.length; i<formCount; i++) {
             $(forms.get(i)).find(':input', 'input[type=hidden]').each(function() {
                 updateFormIndex(this, prefix, i);
             });
+            // Update the form's id
+            updateFormIndex(forms.get(i), prefix, i);
+            // Update the title in the form
             $(forms.get(i)).find('.action-title').html('Action' + ' ' + (i+1));
         }
     }
@@ -136,6 +144,7 @@ function deleteFormOnCreation(prefix, btn) {
 }
 
 
+var totalFormsOnLoad = parseInt($('#id_form-TOTAL_FORMS').val());
 function deleteFormOnEdit(prefix, btn) {
     var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
     var actionForm = btn.closest('.action-form');
@@ -154,6 +163,7 @@ function deleteFormOnEdit(prefix, btn) {
             actionForm.find('.btn.btn-secondary')
             .removeClass('btn-secondary').addClass('btn-danger')
         }
+        // Forms which previously added, must remove them with POST
         else{
             // Remove the check from the 'Delete' field
             actionFormDeletionCheck.prop('checked', false)
@@ -164,8 +174,12 @@ function deleteFormOnEdit(prefix, btn) {
         }
 
     }
+    // Form added during this session - allow to delete on-spot.
+    // (totalFormsOnLoad-1) since the count starts on 0
+    if(parseInt(actionForm.attr('id').match(/\d+/)) > (totalFormsOnLoad-1)){
+        deleteFormOnCreation('form', btn)
+    }
     return false;
-
 }
 
 
@@ -175,7 +189,7 @@ function deleteFormOnEdit(prefix, btn) {
 // ---------------------------------------------------------------------------------
 var waitTimeField = 'wait_time_in_sec';
 var cssSelectorField = 'css_selector_click'
-var firstActionFormId = '#action-form-0'
+var firstActionFormId = '#form-0'
 
 // On the edit page, iterate all the existing action-forms and hide irrelevant fields.
 $(document).ready(function(){
