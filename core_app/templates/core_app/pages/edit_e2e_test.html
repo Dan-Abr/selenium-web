@@ -27,14 +27,21 @@
                 <div class="card-body">
                     <h4 class="action-title card-title">Action {{ forloop.counter }}</h4>
                     {{ form.as_p }}
-                    {% if forloop.last %}
+                    {% if forloop.first %}
+                        {% comment %} The first form should not be deleted (no "-" button) {% endcomment %}
+                        {% if forloop.first == forloop.last %}
+                            {% comment %} Do not show a PLUS button on the first form if 
+                                          it's not the only one {% endcomment %}
+                            <button type="button" class="btn btn-success add-form-row">+</button>
+                        {% endif %}
+                    {% elif forloop.last %}
                         {% comment %} "+" button should only apear on the last form {% endcomment %}
-                        <button type="button" class="btn btn-danger remove-form-row">
+                        <button type="button" class="btn btn-secondary remove-form-row">
                             <span class="glyphicon glyphicon-minus" aria-hidden="true">-</span>
                         </button>
                         <button type="button" class="btn btn-success add-form-row">+</button>
                     {% else %}
-                        <button type="button" class="btn btn-danger remove-form-row">
+                        <button type="button" class="btn btn-secondary remove-form-row">
                             <span class="glyphicon glyphicon-minus" aria-hidden="true">-</span>
                         </button>
                     {% endif %}

@@ -4,6 +4,13 @@
 // ---------------------------------------------------------------------------------
 // Clone & Delete Forms
 // ---------------------------------------------------------------------------------
+var maxForms = 7
+var minForms = 1
+var editPage = 'edit'
+var createPage = 'add'
+var firstActionForm = 'action-form-0'
+
+
 function updateFormIndex(form, prefix, ndx) {
     var id_regex = new RegExp('(' + prefix + '-\\d+)');
     var replacement = prefix + '-' + ndx;
@@ -20,18 +27,25 @@ function cloneForm(selector, prefix) {
     // created from will already have a MINUS button.
     var newForm = $(selector).clone(true);
 
-    // Max of 7 forms
-    if(total < 7){
-
+    if(total < maxForms){
         // If there is only one form, create a MINUS button (total == 1) after cloning it
         // since it doesn't have this button.
-        if(total == 1){
-            form_btn_minus = $("<button>", {"type": "button", "class": "btn btn-danger remove-form-row"}).text("-");
-            // Create the MINUS button after the PLUS button
-            newForm.find('.card-body').find('.add-form-row').before(form_btn_minus);
+        if(total == minForms){
+            if(window.location.href.indexOf(createPage) > 0){
+                form_btn_minus = $("<button>", {"type": "button", "class": "btn btn-danger remove-form-row"}).text("-");
+                // Create the MINUS button after the PLUS button
+                newForm.find('.card-body').find('.add-form-row').before(form_btn_minus);
+            } else if(window.location.href.indexOf(editPage) > 0){
+                // In the edit page buttons can't be deleted and must be marked first.
+                // Thus, the color of the buttons should be neutral unless they are
+                // being clicked.
+                form_btn_minus = $("<button>", {"type": "button", "class": "btn btn-secondary remove-form-row"}).text("-");
+                // Create the MINUS button after the PLUS button
+                newForm.find('.card-body').find('.add-form-row').before(form_btn_minus);
+            }
         }
 
-        // Prevent duplicate MINUS buttons after duplications.
+        // Prevent duplicate MINUS buttons after duplications in previous forms.
         var form_btn_minus = $(selector).find('.card-body').find('.remove-form-row')
         if(form_btn_minus != undefined){
             $(selector).find('.card-body').find('.remove-form-row').remove();
@@ -61,16 +75,23 @@ function cloneForm(selector, prefix) {
         var allFormsExceptLast = $('.action-form:not(:last)');
 
         // Replace the PLUS button with a MINUS button
-        allFormsExceptLast.find('.btn.add-form-row')
-        .removeClass('btn-success').addClass('btn-danger')
-        .removeClass('add-form-row').addClass('remove-form-row')
-        .html('<span class="glyphicon glyphicon-minus" aria-hidden="true">-</span>');
+        if(window.location.href.indexOf(createPage) > 0){
+            allFormsExceptLast.find('.btn.add-form-row')
+            .removeClass('btn-success').addClass('btn-danger')
+            .removeClass('add-form-row').addClass('remove-form-row')
+            .html('<span class="glyphicon glyphicon-minus" aria-hidden="true">-</span>');
+        } else if(window.location.href.indexOf(editPage) > 0){
+            allFormsExceptLast.find('.btn.add-form-row')
+            .removeClass('btn-success').addClass('btn-secondary')
+            .removeClass('add-form-row').addClass('remove-form-row')
+            .html('<span class="glyphicon glyphicon-minus" aria-hidden="true">-</span>');
+        }
 
         // Update the title with the right number
         newForm.find('.action-title').html('Action' + ' ' + total);
     }
-    if(total == 7){
-        // Remove the PLUS button on the 7th form
+    if(total == maxForms){
+        // Remove the PLUS button on the last form
         newForm.find('.btn.add-form-row').remove();
 
     }
@@ -78,12 +99,11 @@ function cloneForm(selector, prefix) {
 }
 
 
-function deleteForm(prefix, btn) {
+function deleteFormOnCreation(prefix, btn) {
     var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
 
     // Retain one form
-    if (total > 1){
-        // Delete the last form
+    if (total > minForms){
         btn.closest('.action-form').remove();
 
         // Add the PLUS button to the newest last form 
@@ -116,6 +136,39 @@ function deleteForm(prefix, btn) {
 }
 
 
+function deleteFormOnEdit(prefix, btn) {
+    var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+    var actionForm = btn.closest('.action-form');
+
+    // Do not allow the deletion of the first form
+    if (total > minForms && actionForm.attr('id') != firstActionForm){
+        var actionFormDeletionCheck = actionForm.find('input[type="checkbox"]')
+        var checkedForDeletion = actionFormDeletionCheck.prop('checked')
+        
+        // If the element is unchecked for deletion, check it.
+        if(!checkedForDeletion){
+            // Check the 'Delete' field to delete the form
+            actionFormDeletionCheck.prop('checked', true)
+
+            // Feedback of red-colored button for the form to be deleted
+            actionForm.find('.btn.btn-secondary')
+            .removeClass('btn-secondary').addClass('btn-danger')
+        }
+        else{
+            // Remove the check from the 'Delete' field
+            actionFormDeletionCheck.prop('checked', false)
+
+            // Feedback of gray-colored button as it won't be deleted
+            actionForm.find('.btn.btn-danger')
+            .removeClass('btn-danger').addClass('btn-secondary')
+        }
+
+    }
+    return false;
+
+}
+
+
 
 // ---------------------------------------------------------------------------------
 // Update Forms' Fields (wait, click)
@@ -123,14 +176,22 @@ function deleteForm(prefix, btn) {
 var waitTimeField = 'wait_time_in_sec';
 var cssSelectorField = 'css_selector_click'
 var firstActionFormId = '#action-form-0'
-var actionFormClass = '.action-form'
 
-// On edit page, iterate all the existing action-forms and hide irrelevant fields.
+// On the edit page, iterate all the existing action-forms and hide irrelevant fields.
 $(document).ready(function(){
-    $(document).find('.action-form').each(function() {
-        var actionType = $(this).find('select').val()
-        hideShowFormFields(this, actionType)
-    });
+    if(window.location.href.indexOf(editPage) > 0){
+        // Hide actionTypes based on the user's choice for the form
+        $(document).find('.action-form').each(function() {
+            var actionType = $(this).find('select').val()
+            hideShowFormFields(this, actionType)
+        });
+        // Remove deletion option for the first form
+        var actionForm = $(document).find(firstActionFormId);
+        if (actionForm != undefined){
+            actionForm.find('label:last').remove()
+            actionForm.find('input[type="checkbox"]').remove()
+        }
+    }
 });
 
 
@@ -177,7 +238,7 @@ $(document).ready(function(){
 // ---------------------------------------------------------------------------------
 // Triggers
 // ---------------------------------------------------------------------------------
-// ..
+// When the user clicks on new form, create a clone
 $(document).on('click', '.add-form-row', function(e){
     e.preventDefault();
     cloneForm('.action-form:last', 'form');
@@ -185,16 +246,21 @@ $(document).on('click', '.add-form-row', function(e){
 });
 
 
-// ..
+// When the user clicks on remove form, delete/mark it
 $(document).on('click', '.remove-form-row', function(e){
     e.preventDefault();
-    deleteForm('form', $(this));
+    if(window.location.href.indexOf(createPage) > 0){
+        deleteFormOnCreation('form', $(this));
+    }
+    else if(window.location.href.indexOf(editPage) > 0){
+        deleteFormOnEdit('form', $(this));
+    }
     return false;
 });
 
 
-// When the user change chooses action, update the form with
-// the relevant fields for that action.
+// When the user changes the chooses action, update the form
+// with the relevant fields for that action.
 $('select').on('change', function(e) {
     hideShowFormFields(this, this.value);
     return false;

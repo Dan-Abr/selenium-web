@@ -129,8 +129,6 @@ E2ETestActionFormsetCreate = modelformset_factory(
     validate_min=True,
     max_num=7,
     validate_max=True,
-    can_delete=True,
-    can_delete_extra=True,
 )
 
 
