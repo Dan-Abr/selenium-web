@@ -219,6 +219,7 @@ function hideShowFormFields(form, selectedValue){
                 $(this).show();
             });
             form.closest('.action-form').find('input[id$='+cssSelectorField+'], label[for$='+cssSelectorField+']').each(function() {
+                $(this).val('')
                 $(this).hide();
             });
             break;
@@ -228,6 +229,7 @@ function hideShowFormFields(form, selectedValue){
                 $(this).show();
             });
             form.closest('.action-form').find('input[id$='+waitTimeField+'], label[for$='+waitTimeField+']').each(function() {
+                $(this).val('')
                 $(this).hide();
             });
             break;
@@ -238,13 +240,16 @@ function hideShowFormFields(form, selectedValue){
 // On page load, set the first form with a 'Wait' action and hide any other field.
 // This is for the page where the user creates new tests.
 $(document).ready(function(){
+    if(window.location.href.indexOf(createPage) > 0){
         $(document).find(firstActionFormId).find('input[id$='+cssSelectorField+']').each(function() {
             // If the CSS selector field is empty hide it (not in edit mode)
             if(!$(this).val()){
                 $(document).find(firstActionFormId).find('label[for$='+cssSelectorField+']').hide();
+                $(this).val('')
                 $(this).hide();
             }
         });
+    }
 });
 
 
