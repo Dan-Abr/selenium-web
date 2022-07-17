@@ -37,6 +37,8 @@ class E2ETestActionModel(models.Model):
     wait_time_in_sec = models.IntegerField(blank=True, null=True, max_length=3)
     css_selector_click = models.CharField(blank=True, null=True, max_length=1024)
 
+    created = models.DateTimeField(auto_now_add=True)
+
 
 class E2ETestResultsModel(models.Model):
     url = models.TextField()
