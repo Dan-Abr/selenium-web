@@ -14,6 +14,7 @@ class TestModels(TestCase):
     e2e_test_results_1 = None
     user_dummy_credentials_1 = None
     user_dummy_1 = None
+    action_type_db_entry = None
 
     def setUp(self):
         # Create a PeriodicTask in django celery beat. Will be used for scheduling e2e tests
@@ -56,7 +57,7 @@ class TestModels(TestCase):
 
 
     # ------------ Tests start here ------------
-    def test_E2ETestParamsModel_successfully_added_new_e2e_test_to_db(self):
+    def test_E2ETestParamsModel_successfully_added_entry_to_db(self):
         # Verify the E2E test was added to the database
         e2e_test_params = E2ETestParamsModel.objects.get(pk=1)
         self.assertEqual(e2e_test_params.url, 'https://google.com')
@@ -68,7 +69,7 @@ class TestModels(TestCase):
         self.assertEqual(e2e_test_params.user.username, 'test_user1')
 
 
-    def test_E2ETestResultsModel_successfully_added_test_result_to_db(self):
+    def test_E2ETestResultsModel_successfully_added_entry_to_db(self):
         # Verify the E2E test results added to the database
         e2e_test_results = E2ETestResultsModel.objects.get(pk=1)
         self.assertEqual(e2e_test_results.url, 'https://google.com')
@@ -89,3 +90,10 @@ class TestModels(TestCase):
             # Should be None
             e2e_test_params = None
         self.assertIsNone(e2e_test_params)
+
+
+    def test_E2ETestActionModel_successfully_added_entry_db(self):
+        # Verify ActionMode was added to the database
+        action_type_db_entry = E2ETestActionModel.objects.create(event_type = 1,
+                                                                 e2e_test_params = self.e2e_test_params_1)
+        self.assertEqual(action_type_db_entry.event_type, 1)

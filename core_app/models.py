@@ -43,7 +43,7 @@ class E2ETestActionModel(models.Model):
 class E2ETestResultsModel(models.Model):
     url = models.TextField()
     page_title = models.CharField(max_length=200)
-    status = models.CharField(max_length=10)
+    status = models.CharField(max_length=10) # Change to Bool
 
     # e2e_test_params = models.OneToOneField(E2ETestParamsModel, db_index=True, on_delete=models.CASCADE)
     user = models.OneToOneField(User, db_index=True, on_delete=models.CASCADE)

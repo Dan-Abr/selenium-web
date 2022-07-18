@@ -2,11 +2,13 @@
 from random import random
 import json
 
+# third-party
+from django_celery_beat.models import PeriodicTask, IntervalSchedule
+
 # Django
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View, generic
-from django_celery_beat.models import PeriodicTask, IntervalSchedule
 from django.forms import DateField
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
