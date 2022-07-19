@@ -174,7 +174,7 @@ class EditE2ETestView(LoginRequiredMixin, View):
             periodic_task.enabled = True if request.POST.get('enabled') == "on" else False
             periodic_task.interval = schedule
             periodic_task.expires = None if request.POST.get('end_date') == "" else request.POST.get('end_date')
-            periodic_task.args = json.dumps([request.POST.get('url')])
+            periodic_task.kwargs = json.dumps({'url': request.POST.get('url'), 'user_pk': request.user.pk})
             periodic_task.save()
 
             e2e_test_params = e2e_test_params__form.save(commit=False)
