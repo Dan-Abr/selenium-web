@@ -14,21 +14,21 @@
             </tr>
         </thead>
         <tbody>
-            {% for item in object_list %}
+            {% for result in object_list %}
             <tr>
-                <th scope="row">{{ item.id }}</th>
+                <th scope="row">{{ result.id }}</th>
                 <td>
-                    <p>{{ item.url }}</p>
+                    <p>{{ result.url }}</p>
                 </td>
-                <td>{{ item.page_title }}</td>
+                <td>{{ result.page_title }}</td>
                 <td>
-                    {% if item.status == 'Success' %}
+                    {% if result.status == 'Success' %}
                         <span class="badge alert-success">Success</span>
                     {% else %}
                         <span class="badge alert-dark">Failed</span>
                     {% endif %}
                 </td>
-                <td>{{ item.created }}</td>
+                <td>{{ result.created }}</td>
             </tr>
             {% endfor %}
         </tbody>

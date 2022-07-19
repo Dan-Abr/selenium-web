@@ -177,7 +177,6 @@ class EditE2ETestView(LoginRequiredMixin, View):
             periodic_task.args = json.dumps([request.POST.get('url')])
             periodic_task.save()
 
-            # TASK: Add a boolean to trigger a successful message as feedback
             e2e_test_params = e2e_test_params__form.save(commit=False)
             e2e_test_params.launches_per_day = request.POST.get('launches_per_day')
             if type(request.POST.get('start_date')) is type(DateField):
@@ -197,8 +196,6 @@ class EditE2ETestView(LoginRequiredMixin, View):
         else:
             messages.error(request, 'Please fix the issues below.')
 
-        # Retrieve the latest formset after POST
-        pk = self.kwargs.get('pk')
         # Latest actions should be last
         e2e_test_actions = E2ETestActionModel.objects.filter(e2e_test_params=e2e_test).order_by('-created').reverse()
         e2e_test_params__form = E2ETestParamsForm(instance=e2e_test)
@@ -239,8 +236,12 @@ class DeleteE2ETestView(LoginRequiredMixin, View):
 
 
 class E2ETestResultsListView(LoginRequiredMixin, generic.ListView):
-    """List the results of scheduled e2e-tests.
+    """List the results of the scheduled e2e-tests.
     """
     model = E2ETestResultsModel
     template_name = TEST_RESULTS_TEMPLATE
     paginate_by = 10
+
+    def get_queryset(self):
+        qs = self.model.objects.filter(user=self.request.user)
+        return qs
