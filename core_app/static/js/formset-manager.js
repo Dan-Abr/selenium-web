@@ -6,7 +6,7 @@
 var maxForms = 7
 var minForms = 1
 var editPage = 'edit'
-var createPage = 'add'
+var createPage = 'create'
 var firstActionForm = 'form-0'
 var totalFormsOnLoad = parseInt($('#id_form-TOTAL_FORMS').val());
 

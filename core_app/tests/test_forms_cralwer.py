@@ -43,13 +43,13 @@ class TestE2ETestParamsForm(TransactionTestCase):
         User.objects.all().delete()
         
 
-    def test_addE2ETest_valid_form_returns_valid_response(self):
+    def test_createE2ETest_valid_form_returns_valid_response(self):
         # print("---------------------------------")
         # print(self.form.errors)
         # print("---------------------------------")
         self.assertTrue(self.form.is_valid())
 
-    def test_addE2ETest_valid_form_saved_fields(self):
+    def test_createE2ETest_valid_form_saved_fields(self):
         form_saved = None
         if self.form.is_valid():
             # Connect between the Django-beat database (celery) and the app's database
@@ -119,7 +119,7 @@ class TestE2ETestActionForm(TransactionTestCase):
         User.objects.all().delete()
 
 
-    def test_addE2ETest_valid_form_returns_valid_response(self):
+    def test_createE2ETest_valid_form_returns_valid_response(self):
         # print("---------------------------------")
         # print(self.form.errors)
         # print("---------------------------------")

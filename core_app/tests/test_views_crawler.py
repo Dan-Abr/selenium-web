@@ -21,13 +21,13 @@ class TestAuthViews(TestCase):
     login_user_response = None
     user_dummy_1 = None
 
-    e2e_test_results_list_url = None
-    add_e2e_test_url = None
+    create_e2e_test_url = None
     edit_e2e_test_url = None
     delete_e2e_test_url = None
-
+    e2e_test_results_list_url = None
+    
     def setUp(self):
-        self.add_e2e_test_url = reverse('add-e2e-test')
+        self.create_e2e_test_url = reverse('create-e2e-test')
         # self.edit_e2e_test_url = reverse('edit-e2e-test')
         # self.delete_e2e_test_url = reverse('delete-e2e-test')
         self.e2e_test_results_list_url = reverse('e2e-test-results-list')
@@ -60,7 +60,7 @@ class TestAuthViews(TestCase):
 
     def test_GET_add_e2e_test_url(self):
         # Can fetch page
-        response = self.client.get(self.add_e2e_test_url)
+        response = self.client.get(self.create_e2e_test_url)
         self.assertEqual(response.status_code, 200)
         
     

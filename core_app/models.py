@@ -46,7 +46,7 @@ class E2ETestResultsModel(models.Model):
     status = models.CharField(max_length=10) # Change to Bool
 
     # e2e_test_params = models.OneToOneField(E2ETestParamsModel, db_index=True, on_delete=models.CASCADE)
-    user = models.OneToOneField(User, db_index=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, db_index=True, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

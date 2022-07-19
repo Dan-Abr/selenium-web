@@ -22,16 +22,16 @@ REGISTER_TEMPLATE = 'core_app/auth/register.html'
 LOGIN_TEMPLATE = 'core_app/auth/login.html'
 
 TEST_RESULTS_TEMPLATE = 'core_app/pages/e2e_test_results_list.html'
-ADD_TEST_TEMPLATE = 'core_app/pages/add_e2e_test.html'
+CREATE_TEST_TEMPLATE = 'core_app/pages/create_e2e_test.html'
 EDIT_TEST_TEMPLATE = 'core_app/pages/edit_e2e_test.html'
 DELETE_TEST_CONFIRM_TEMPLATE = 'core_app/pages/e2e_test_confirm_delete.html'
 
 
-class AddE2ETestView(LoginRequiredMixin, View):
-    """Render scheduled tests and allow adding new tests.
+class CreateE2ETestView(LoginRequiredMixin, View):
+    """Render scheduled tests and allow creating new tests.
     The class has two methods:
     GET - get all scheduled e2e-tests.
-    POST - let the user add new e2e-tests.
+    POST - let the user create new e2e-tests.
     """
 
     def get(self, request, *args, **kwargs):
@@ -46,7 +46,7 @@ class AddE2ETestView(LoginRequiredMixin, View):
             'e2e_test_params__form': e2e_test_params__form,
             'e2e_test_action__formset': e2e_test_action__formset,
         }
-        return render(request, ADD_TEST_TEMPLATE, context)
+        return render(request, CREATE_TEST_TEMPLATE, context)
 
     def post(self, request, *args, **kwargs):
         # Show all scheduled e2e-tests
@@ -81,8 +81,7 @@ class AddE2ETestView(LoginRequiredMixin, View):
                 interval=schedule,
                 name=str(request.user)+'_e2e-test_'+str(user_tests_count),
                 task='core_app.tasks.call_crawl_website',
-                args=json.dumps([request.user.pk, request.POST.get('url')]),  # pass params for call_crawl_website()
-                kwargs=json.dumps({}),
+                kwargs=json.dumps({'url': request.POST.get('url'), 'user_pk': request.user.pk}),
                 start_time = request.POST.get('start_date'),
                 expires = None if request.POST.get('end_date') == "" else request.POST.get('end_date'),
                 one_off=False,
@@ -115,7 +114,7 @@ class AddE2ETestView(LoginRequiredMixin, View):
             'e2e_test_action__formset': e2e_test_action__formset
         }
 
-        return render(request, ADD_TEST_TEMPLATE, context)
+        return render(request, CREATE_TEST_TEMPLATE, context)
 
 
 class EditE2ETestView(LoginRequiredMixin, View):
@@ -236,7 +235,7 @@ class DeleteE2ETestView(LoginRequiredMixin, View):
         periodic_task.delete()
 
         # Return to the tests' page
-        return redirect(reverse('add-e2e-test'))
+        return redirect(reverse('create-e2e-test'))
 
 
 class E2ETestResultsListView(LoginRequiredMixin, generic.ListView):

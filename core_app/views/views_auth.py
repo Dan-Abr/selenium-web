@@ -66,7 +66,7 @@ class UserLoginView(View):
                 if user.is_active:
                     # Login and redirect
                     login(request, user)
-                    return redirect(reverse('add-e2e-test'))
+                    return redirect(reverse('create-e2e-test'))
                 else:
                     return HttpResponse("Your account is disabled.")
             else:
