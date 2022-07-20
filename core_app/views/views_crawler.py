@@ -15,6 +15,7 @@ from django.contrib import messages
 
 # local Django
 from ..forms import *
+from ..utils import e2e_test_action_form_to_dict
 from ..models import E2ETestParamsModel, E2ETestResultsModel, E2ETestActionModel
 
 
@@ -70,10 +71,17 @@ class CreateE2ETestView(LoginRequiredMixin, View):
 
         # POST the entry to database
         if e2e_test_params__form.is_valid() and e2e_test_action__formset.is_valid():
-            # Connect between the Celery task and the app task
+            # Will be used to connect between the Celery task, PeriodicTask and crawler actions
             e2e_test_params = e2e_test_params__form.save(commit=False)
             # e2e_test_launches_in_minutes = (max(round(launches_per_day_scaled_to_microseconds), 1)/1000000)/60
             # new_e2e_test_job.launches_per_day = 1440/e2e_test_launches_in_minutes
+            
+            # Formset of crawler actions
+            e2e_test_actions = []
+            for form in e2e_test_action__formset:
+                e2e_test_action = form.save(commit=False)
+                e2e_test_action.e2e_test_params = e2e_test_params
+                e2e_test_actions.append(e2e_test_action_form_to_dict(e2e_test_action))
 
             # Schedule the e2e-test using Celery
             periodic_task = PeriodicTask.objects.create(
@@ -81,7 +89,9 @@ class CreateE2ETestView(LoginRequiredMixin, View):
                 interval=schedule,
                 name=str(request.user)+'_e2e-test_'+str(user_tests_count),
                 task='core_app.tasks.call_crawl_website',
-                kwargs=json.dumps({'url': request.POST.get('url'), 'user_pk': request.user.pk}),
+                kwargs=json.dumps({'url': request.POST.get('url'), 
+                                   'user_pk': request.user.pk, 
+                                   'tasks': e2e_test_actions,}),
                 start_time = request.POST.get('start_date'),
                 expires = None if request.POST.get('end_date') == "" else request.POST.get('end_date'),
                 one_off=False,
@@ -96,10 +106,9 @@ class CreateE2ETestView(LoginRequiredMixin, View):
             e2e_test_params.periodic_task = periodic_task
             e2e_test_params.save()
 
+            # Save last to prevent data-loss in previous forms
             for form in e2e_test_action__formset:
-                e2e_test_action = form.save(commit=False)
-                e2e_test_action.e2e_test_params = e2e_test_params
-                e2e_test_action.save()
+                form.save()
 
             messages.success(request, 'Created successfully.')
             # Clear the forms after a successful creation
@@ -167,6 +176,15 @@ class EditE2ETestView(LoginRequiredMixin, View):
 
         # POST the entry to database
         if e2e_test_params__form.is_valid() and e2e_test_action__formset.is_valid():
+            # Will be used to connect between the Celery task, PeriodicTask and crawler actions
+            e2e_test_params = e2e_test_params__form.save(commit=False)
+
+            # Formset of crawler actions
+            e2e_test_actions = []
+            for form in e2e_test_action__formset:
+                e2e_test_action = form.save(commit=False)
+                e2e_test_action.e2e_test_params = e2e_test_params
+                e2e_test_actions.append(e2e_test_action_form_to_dict(e2e_test_action))
 
             # Get the according Celery task from beat's PeriodicTask table
             periodic_task = PeriodicTask.objects.get(pk=e2e_test.periodic_task.id)
@@ -174,10 +192,11 @@ class EditE2ETestView(LoginRequiredMixin, View):
             periodic_task.enabled = True if request.POST.get('enabled') == "on" else False
             periodic_task.interval = schedule
             periodic_task.expires = None if request.POST.get('end_date') == "" else request.POST.get('end_date')
-            periodic_task.kwargs = json.dumps({'url': request.POST.get('url'), 'user_pk': request.user.pk})
+            periodic_task.kwargs = json.dumps({'url': request.POST.get('url'), 
+                                               'user_pk': request.user.pk, 
+                                               'tasks': e2e_test_actions,})
             periodic_task.save()
 
-            e2e_test_params = e2e_test_params__form.save(commit=False)
             e2e_test_params.launches_per_day = request.POST.get('launches_per_day')
             if type(request.POST.get('start_date')) is type(DateField):
                 e2e_test_params.start_date = request.POST.get('start_date')
@@ -185,13 +204,15 @@ class EditE2ETestView(LoginRequiredMixin, View):
                 e2e_test_params.end_date = request.POST.get('end_date')
             e2e_test_params.save()
 
+            # Save last to prevent data-loss in previous forms
             for form in e2e_test_action__formset:
-                e2e_test_action = form.save(commit=False)
-                e2e_test_action.e2e_test_params = e2e_test_params
-                e2e_test_action.save()
+                form.save()
+
+            # Delete forms based on user-choice
             e2e_test_action__formset.save(commit=False)
             for form in e2e_test_action__formset.deleted_objects:
                 form.delete()
+
             messages.success(request, 'Updated successfully.')
         else:
             messages.error(request, 'Please fix the issues below.')

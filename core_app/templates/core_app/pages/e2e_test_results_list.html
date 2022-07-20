@@ -23,9 +23,9 @@
                 <td>{{ result.page_title }}</td>
                 <td>
                     {% if result.status == 'Success' %}
-                        <span class="badge alert-success">Success</span>
+                        <span class="badge alert-success">{{result.status}}</span>
                     {% else %}
-                        <span class="badge alert-dark">Failed</span>
+                        <span class="badge alert-dark">{{result.status}}</span>
                     {% endif %}
                 </td>
                 <td>{{ result.created }}</td>
