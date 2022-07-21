@@ -187,7 +187,7 @@ function deleteFormOnEdit(prefix, btn) {
 // Update Forms' Fields (wait, click)
 // ---------------------------------------------------------------------------------
 var waitTimeField = 'wait_time_in_sec';
-var cssSelectorField = 'css_selector_click'
+var xpathField = 'xpath_click'
 var firstActionFormId = '#form-0'
 
 
@@ -218,14 +218,14 @@ function hideShowFormFields(form, selectedValue){
             form.closest('.action-form').find('input[id$='+waitTimeField+'], label[for$='+waitTimeField+']').each(function() {
                 $(this).show();
             });
-            form.closest('.action-form').find('input[id$='+cssSelectorField+'], label[for$='+cssSelectorField+']').each(function() {
+            form.closest('.action-form').find('input[id$='+xpathField+'], label[for$='+xpathField+']').each(function() {
                 $(this).val('')
                 $(this).hide();
             });
             break;
         case "2":
             // If the chosen action is 'Click', hide unrelated fields
-            form.closest('.action-form').find('input[id$='+cssSelectorField+'], label[for$='+cssSelectorField+']').each(function() {
+            form.closest('.action-form').find('input[id$='+xpathField+'], label[for$='+xpathField+']').each(function() {
                 $(this).show();
             });
             form.closest('.action-form').find('input[id$='+waitTimeField+'], label[for$='+waitTimeField+']').each(function() {
@@ -241,10 +241,10 @@ function hideShowFormFields(form, selectedValue){
 // This is for the page where the user creates new tests.
 $(document).ready(function(){
     if(window.location.href.indexOf(createPage) > 0){
-        $(document).find(firstActionFormId).find('input[id$='+cssSelectorField+']').each(function() {
-            // If the CSS selector field is empty hide it (not in edit mode)
+        $(document).find(firstActionFormId).find('input[id$='+xpathField+']').each(function() {
+            // If the XPath field is empty hide it (not in edit mode)
             if(!$(this).val()){
-                $(document).find(firstActionFormId).find('label[for$='+cssSelectorField+']').hide();
+                $(document).find(firstActionFormId).find('label[for$='+xpathField+']').hide();
                 $(this).val('')
                 $(this).hide();
             }

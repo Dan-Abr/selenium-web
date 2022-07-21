@@ -102,11 +102,11 @@ class E2ETestActionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         # Label with uppercase 
         super(E2ETestActionForm, self).__init__(*args, **kwargs)
-        self.fields['css_selector_click'].label = "CSS Selector Click"
+        self.fields['xpath_click'].label = "XPath Click"
 
     class Meta:
         model = E2ETestActionModel
-        fields = ['event_type', 'wait_time_in_sec', 'css_selector_click',]
+        fields = ['event_type', 'wait_time_in_sec', 'xpath_click',]
         # Style with Bootstrap
         widgets={
             'event_type': forms.Select(attrs={'class': 'form-control action-type',
@@ -115,8 +115,8 @@ class E2ETestActionForm(forms.ModelForm):
                                                         'class': 'form-control', 
                                                         'placeholder': ''
                                                         }),
-            'css_selector_click': forms.TextInput(attrs={'class': 'form-control', 
-                                                        'placeholder': 'example: #element_id'
+            'xpath_click': forms.TextInput(attrs={'class': 'form-control', 
+                                                        'placeholder': 'E.g. /html/body/div[1]/a[1]'
                                                         }),
         }
 

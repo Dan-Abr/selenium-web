@@ -6,5 +6,5 @@ def e2e_test_action_form_to_dict(form):
         # return the waiting time
         return {form.event_type: form.wait_time_in_sec}
     elif(form.event_type == 2):
-        # return the CSS selector
-        return {form.event_type: form.css_selector_click}
+        # return the XPath selector
+        return {form.event_type: form.xpath_click}

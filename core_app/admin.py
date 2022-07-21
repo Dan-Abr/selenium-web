@@ -32,7 +32,7 @@ class E2ETestActionAdmin(admin.ModelAdmin):
         'e2e_test_params',
         'event_type',
         'wait_time_in_sec',
-        'css_selector_click',
+        'xpath_click',
     ]
 
 admin.site.register(E2ETestResultsModel, E2ETestResultsAdmin)
