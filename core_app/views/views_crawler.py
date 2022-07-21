@@ -29,6 +29,7 @@ EDIT_TEST_TEMPLATE = 'core_app/pages/edit_e2e_test.html'
 DELETE_TEST_CONFIRM_TEMPLATE = 'core_app/pages/e2e_test_confirm_delete.html'
 
 
+
 class CreateE2ETestView(LoginRequiredMixin, View):
     """Allow creating new tests.
     The class has two methods:
@@ -128,7 +129,8 @@ class ManageE2ETestsView(LoginRequiredMixin, View):
     """Render scheduled tests and allow creating new tests.
     GET - get all the scheduled e2e-tests.
     """
-
+    paginate_by = 10
+    
     def get(self, request, *args, **kwargs):
         # Show all scheduled e2e-tests
         all_scheduled_tests = E2ETestParamsModel.objects.filter(user=request.user).order_by('-created')
@@ -245,6 +247,7 @@ class EditE2ETestView(LoginRequiredMixin, View):
         return render(request, EDIT_TEST_TEMPLATE, context)
     
 
+
 class DeleteE2ETestView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         # Get the chosen e2e-test with its current settings (fields)
@@ -270,6 +273,7 @@ class DeleteE2ETestView(LoginRequiredMixin, View):
         return redirect(reverse('manage-e2e-tests'))
 
 
+
 class E2ETestResultsListView(LoginRequiredMixin, generic.ListView):
     """List the results of the scheduled e2e-tests.
     """
@@ -278,5 +282,6 @@ class E2ETestResultsListView(LoginRequiredMixin, generic.ListView):
     paginate_by = 10
 
     def get_queryset(self):
+        # Filter to the users' results
         qs = self.model.objects.filter(user=self.request.user)
         return qs

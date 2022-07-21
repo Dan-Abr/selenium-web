@@ -19,6 +19,7 @@ SETTINGS_TEMPLATE = 'core_app/auth/user-settings.html'
 CHANGE_PASSWORD_TEMPLATE = 'core_app/auth/change-password.html'
 
 
+
 class UserRegisterView(SuccessMessageMixin, CreateView):
   template_name = REGISTER_TEMPLATE
   success_url = reverse_lazy('user-login')
@@ -26,11 +27,13 @@ class UserRegisterView(SuccessMessageMixin, CreateView):
   success_message = "Your profile was created successfully. Please log in."
 
 
+
 class UserPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin, PasswordChangeView):
     template_name = CHANGE_PASSWORD_TEMPLATE
     success_url = reverse_lazy('user-change-password')
     form_class = UserPasswordChangeForm
     success_message = "Your profile was changed successfully."
+
 
 
 class UserSettingsView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
@@ -42,6 +45,7 @@ class UserSettingsView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
   def get_object(self):
     # Send the user's data to fill the form with the user's existing settings
     return self.request.user
+
 
 
 class UserLoginView(View):
@@ -73,6 +77,7 @@ class UserLoginView(View):
                 return HttpResponse('No such user')
         else:
             return HttpResponse('Invalid Form')
+
 
 
 class UserLogoutView(View, LoginRequiredMixin):
