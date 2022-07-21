@@ -64,7 +64,11 @@ class UserPasswordChangeForm(PasswordChangeForm):
 
 class UserLoginForm(forms.Form):
     username = forms.CharField(max_length=63)
-    password = forms.CharField(max_length=63, widget=forms.PasswordInput)
+    password = forms.CharField(max_length=63)
+
+    class Meta:
+        model = User
+        fields = ['username', 'password']
 
 
 class E2ETestParamsForm(forms.ModelForm):

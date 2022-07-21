@@ -1,14 +1,13 @@
 # Django
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse
 from django.views import View
 from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 
 # local Django
 from ..forms import *
@@ -50,7 +49,7 @@ class UserSettingsView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
 
 class UserLoginView(View):
     def get(self, request, *args, **kwargs):
-        user_login__form = AuthenticationForm
+        user_login__form = UserLoginForm
 
         context = {
             'user_login__form': user_login__form,
@@ -72,11 +71,14 @@ class UserLoginView(View):
                     login(request, user)
                     return redirect(reverse('create-e2e-test'))
                 else:
-                    return HttpResponse("Your account is disabled.")
+                    messages.error(request, 'Account is disabled.')
+                    return redirect(reverse('user-login'))
             else:
-                return HttpResponse('No such user')
+                messages.error(request, 'Username and/or password are invalid.')
+                return redirect(reverse('user-login'))
         else:
-            return HttpResponse('Invalid Form')
+            messages.error(request, 'Invalid attempt. Please try again.')
+            return redirect(reverse('user-login'))
 
 
 
