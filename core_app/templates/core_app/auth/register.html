@@ -3,6 +3,17 @@
 {% block content %}
 <div class="shadow mt-5 p-4 py-5 bg-body rounded">
 
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.level > 25 %}
+                <ul class="alert alert-danger"> {{ message }}</ul>
+            {% endif %}
+            {% if message.level == 25 %}
+                <ul class="alert alert-success"> {{ message }}</ul>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
     <form id="user_register__form" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         

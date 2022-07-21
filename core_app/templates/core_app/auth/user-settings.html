@@ -5,11 +5,14 @@
     <p>Username: {{ request.user.username }}</p>
     
     {% if messages %}
-        <ul class="alert alert-success">
-    {% for message in messages %}
-            <li {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </li>
-    {% endfor %}
-        </ul>
+        {% for message in messages %}
+            {% if message.level > 25 %}
+                <ul class="alert alert-danger"> {{ message }}</ul>
+            {% endif %}
+            {% if message.level == 25 %}
+                <ul class="alert alert-success"> {{ message }}</ul>
+            {% endif %}
+        {% endfor %}
     {% endif %}
 
     <form id="user_settings__form" method="post" enctype="multipart/form-data">
