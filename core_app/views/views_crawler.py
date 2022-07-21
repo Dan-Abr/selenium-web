@@ -14,7 +14,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 
 # local Django
-from ..forms import *
+from ..forms.forms_crawler import *
 from ..utils import e2e_test_action_form_to_dict
 from ..models import E2ETestParamsModel, E2ETestResultsModel, E2ETestActionModel
 
@@ -130,7 +130,7 @@ class ManageE2ETestsView(LoginRequiredMixin, View):
     GET - get all the scheduled e2e-tests.
     """
     paginate_by = 10
-    
+
     def get(self, request, *args, **kwargs):
         # Show all scheduled e2e-tests
         all_scheduled_tests = E2ETestParamsModel.objects.filter(user=request.user).order_by('-created')

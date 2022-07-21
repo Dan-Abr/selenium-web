@@ -5,7 +5,7 @@ from django_celery_beat.models import PeriodicTask, IntervalSchedule
 from django.test import TransactionTestCase
 
 # local Django
-from ..forms import *
+from ..forms.forms_crawler import *
 
 
 class TestE2ETestParamsForm(TransactionTestCase):

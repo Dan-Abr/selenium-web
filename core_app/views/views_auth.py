@@ -10,7 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 
 # local Django
-from ..forms import *
+from ..forms.forms_auth import *
 
 LOGIN_TEMPLATE = 'core_app/auth/login.html'
 REGISTER_TEMPLATE = 'core_app/auth/register.html'
