@@ -24,26 +24,24 @@ LOGIN_TEMPLATE = 'core_app/auth/login.html'
 
 TEST_RESULTS_TEMPLATE = 'core_app/pages/e2e_test_results_list.html'
 CREATE_TEST_TEMPLATE = 'core_app/pages/create_e2e_test.html'
+MANAGE_TESTS_TEMPLATE = 'core_app/pages/manage_e2e_tests.html'
 EDIT_TEST_TEMPLATE = 'core_app/pages/edit_e2e_test.html'
 DELETE_TEST_CONFIRM_TEMPLATE = 'core_app/pages/e2e_test_confirm_delete.html'
 
 
 class CreateE2ETestView(LoginRequiredMixin, View):
-    """Render scheduled tests and allow creating new tests.
+    """Allow creating new tests.
     The class has two methods:
-    GET - get all scheduled e2e-tests.
-    POST - let the user create new e2e-tests.
+    GET - new an empty form for creating new e2e-tests.
+    POST - let the user create a new e2e-tests.
     """
 
     def get(self, request, *args, **kwargs):
-        # Show all scheduled e2e-tests
-        all_scheduled_tests = E2ETestParamsModel.objects.filter(user=request.user).order_by('-created')
         e2e_test_params__form = E2ETestParamsForm(request.GET or None)
         # On page load, reset the number of added forms
         e2e_test_action__formset = E2ETestActionFormsetCreate(queryset=E2ETestActionModel.objects.none())
         
         context = {
-            'all_scheduled_tests': all_scheduled_tests,
             'e2e_test_params__form': e2e_test_params__form,
             'e2e_test_action__formset': e2e_test_action__formset,
         }
@@ -117,13 +115,29 @@ class CreateE2ETestView(LoginRequiredMixin, View):
         else:
             messages.error(request, 'Please fix the issues below.')
 
+        # Redirect to the page of managing all tests
         context = {
             'all_scheduled_tests': all_scheduled_tests,
-            'e2e_test_params__form': e2e_test_params__form,
-            'e2e_test_action__formset': e2e_test_action__formset
         }
 
-        return render(request, CREATE_TEST_TEMPLATE, context)
+        return render(request, MANAGE_TESTS_TEMPLATE, context)
+
+
+
+class ManageE2ETestsView(LoginRequiredMixin, View):
+    """Render scheduled tests and allow creating new tests.
+    GET - get all the scheduled e2e-tests.
+    """
+
+    def get(self, request, *args, **kwargs):
+        # Show all scheduled e2e-tests
+        all_scheduled_tests = E2ETestParamsModel.objects.filter(user=request.user).order_by('-created')
+        
+        context = {
+            'all_scheduled_tests': all_scheduled_tests,
+        }
+        return render(request, MANAGE_TESTS_TEMPLATE, context)
+
 
 
 class EditE2ETestView(LoginRequiredMixin, View):
@@ -253,7 +267,7 @@ class DeleteE2ETestView(LoginRequiredMixin, View):
         periodic_task.delete()
 
         # Return to the tests' page
-        return redirect(reverse('create-e2e-test'))
+        return redirect(reverse('manage-e2e-tests'))
 
 
 class E2ETestResultsListView(LoginRequiredMixin, generic.ListView):

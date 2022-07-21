@@ -8,7 +8,10 @@
       <ul class="navbar-nav mr-auto">
         {% if request.user.is_authenticated %}
         <li class="nav-item active">
-          <a class="nav-link" href="{% url "create-e2e-test" %}">Tasks</span></a>
+          <a class="nav-link" href="{% url "create-e2e-test" %}">Create Task</span></a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url "manage-e2e-tests" %}">Manage Tasks</span></a>
         </li>
         <li class="nav-item active">
           <a class="nav-link" href="{% url "e2e-test-results-list" %}">Results</a>

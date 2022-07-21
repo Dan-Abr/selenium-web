@@ -67,7 +67,7 @@ def perform_actions(driver, tasks, timeout, error_list):
             try:
                 wait_for_element_to_be_clickable(driver, timeout, task[1])
                 driver.find_element_by_xpath(task[1]).click()
-            except TimeoutException:
+            except TimeoutException as e:
                 error_list.append(e)
                 driver.quit()
             except Exception as e:

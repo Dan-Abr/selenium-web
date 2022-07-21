@@ -10,7 +10,6 @@ app = Celery('tasks', broker='redis://localhost/', backend='redis://localhost/')
 # celery -A selenium_web beat --loglevel=info
 
 
-find_element_class = "//div[@class='A8SBwf']"
 @shared_task
 def call_crawl_website(user_pk=None, url="", tasks=None):
     if user_pk == None or tasks == None:
