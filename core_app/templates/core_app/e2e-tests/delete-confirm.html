@@ -4,7 +4,8 @@
 <div class="mt-5 py-5">
     <form method="post">{% csrf_token %}
         <p>Are you sure you want to delete "{{ e2e_test }}"?</p>
-        <input type="submit" value="Confirm">
+        <button class="btn btn-danger" type="submit">Delete</button>
+        <button type="button" onclick="location.href='{% url "manage-e2e-tests" %}'" class="btn btn-block btn-secondary">Back</button>
     </form>
 </div>
 {% endblock content %}
