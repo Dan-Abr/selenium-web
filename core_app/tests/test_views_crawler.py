@@ -30,7 +30,7 @@ class TestAuthViews(TestCase):
         self.create_e2e_test_url = reverse('create-e2e-test')
         # self.edit_e2e_test_url = reverse('edit-e2e-test')
         # self.delete_e2e_test_url = reverse('delete-e2e-test')
-        self.e2e_test_results_list_url = reverse('e2e-test-results-list')
+        self.e2e_test_results_list_url = reverse('results-e2e-tests')
 
         self.login_url = reverse('user-login')
         self.logout_url = reverse('user-logout')

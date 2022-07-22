@@ -15,7 +15,6 @@ from django.contrib.auth.models import User
 from .models import E2ETestResultsModel
 
 
-
 def crawl_website(user_pk, url, tasks):
     # The user who requested the task
     user = User.objects.get(pk=user_pk)
@@ -34,7 +33,7 @@ def crawl_website(user_pk, url, tasks):
         driver.get(url)
         driver.set_page_load_timeout(timeout)
     except TimeoutException:
-        error_list.append("timeout")
+        error_list.append("Timeout.")
 
     # Perform crawling tasks (wait, click)
     error_list = perform_actions(driver, tasks, timeout, error_list)
@@ -58,27 +57,20 @@ def perform_actions(driver, tasks, timeout, error_list):
             try:
                 time.sleep(task[1])
             except TimeoutException:
-                error_list.append(e)
-                driver.quit()
+                error_list.append("Timeout.")
+                # driver.quit()
             except Exception as e:
-                error_list.append(e)
+                error_list.append(str(e))
         elif(task[0] == '2'):
             # Click
             try:
-                wait_for_element_to_be_clickable(driver, timeout, task[1])
                 driver.find_element_by_xpath(task[1]).click()
             except TimeoutException as e:
-                error_list.append(e)
-                driver.quit()
+                error_list.append("Timeout.")
+                # driver.quit()
             except Exception as e:
-                error_list.append(e)
-    
+                error_list.append(str(e))
     return error_list
-
-
-
-def wait_for_element_to_be_clickable(driver, timeout, element):
-    WebDriverWait(driver, timeout).until(EC.element_to_be_clickable((By.XPATH, element)))
 
 
 def post_results_to_db(user, url, error_list):
@@ -87,15 +79,18 @@ def post_results_to_db(user, url, error_list):
             url=url,
             page_title="title",
             status="Success",
-            # e2e_test_params = e2e_test_params_model_obj,
+            # e2e_test_params = test_id,
             user=user,
         )
     else:
-        # TASK: add the error list as a log
         E2ETestResultsModel.objects.create(
             url=url,
             page_title="title",
-            status="Failed: "+''.join(str(error) for error in error_list),
-            # e2e_test_params = e2e_test_params_model_obj,
+            status="Failed",
+            failed_details="".join(str(error) for error in error_list),
+            # failed_details="Failed",
+            # e2e_test_params = test_id,
             user=user,
         )
+
+

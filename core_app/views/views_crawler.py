@@ -22,11 +22,11 @@ from ..models import E2ETestParamsModel, E2ETestResultsModel, E2ETestActionModel
 REGISTER_TEMPLATE = 'core_app/auth/register.html'
 LOGIN_TEMPLATE = 'core_app/auth/login.html'
 
-TEST_RESULTS_TEMPLATE = 'core_app/pages/e2e_test_results_list.html'
-CREATE_TEST_TEMPLATE = 'core_app/pages/create_e2e_test.html'
-MANAGE_TESTS_TEMPLATE = 'core_app/pages/manage_e2e_tests.html'
-EDIT_TEST_TEMPLATE = 'core_app/pages/edit_e2e_test.html'
-DELETE_TEST_CONFIRM_TEMPLATE = 'core_app/pages/e2e_test_confirm_delete.html'
+TEST_RESULTS_TEMPLATE = 'core_app/e2e-tests/results.html'
+CREATE_TEST_TEMPLATE = 'core_app/e2e-tests/create.html'
+MANAGE_TESTS_TEMPLATE = 'core_app/e2e-tests/manage.html'
+EDIT_TEST_TEMPLATE = 'core_app/e2e-tests/edit.html'
+DELETE_TEST_CONFIRM_TEMPLATE = 'core_app/e2e-tests/delete-confirm.html'
 
 
 

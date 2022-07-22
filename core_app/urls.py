@@ -39,7 +39,7 @@ urlpatterns = [
     # App
     path('',  
          login_required(login_url='/login/')(E2ETestResultsListView.as_view()), 
-         name='e2e-test-results-list'),
+         name='results-e2e-tests'),
     path('create-test/',  
          login_required(login_url='/login/')(CreateE2ETestView.as_view()), 
          name='create-e2e-test'),

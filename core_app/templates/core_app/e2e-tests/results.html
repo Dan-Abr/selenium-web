@@ -7,27 +7,31 @@
         <thead>
             <tr>
                 <th scope="col">#</th>
+                <th scope="col">Task ID</th>
                 <th scope="col">URL</th>
                 <th scope="col">Page Title</th>
                 <th scope="col">Status</th>
+                {% comment %} <th scope="col">Error</th> {% endcomment %}
                 <th scope="col">Time</th>
             </tr>
         </thead>
         <tbody>
             {% for result in object_list %}
             <tr>
-                <th scope="row">{{ result.id }}</th>
+                <td scope="row">{{ result.id }}</td>
+                <td scope="row">ID</td>
                 <td>
                     <p>{{ result.url }}</p>
                 </td>
                 <td>{{ result.page_title }}</td>
                 <td>
                     {% if result.status == 'Success' %}
-                        <span class="badge alert-success">{{result.status}}</span>
+                        <span class="badge alert-success">Success</span>
                     {% else %}
-                        <span class="badge alert-dark">{{result.status}}</span>
+                        <span class="badge alert-dark">Failed</span>
                     {% endif %}
                 </td>
+                {% comment %} <td><p>{{ result.failed_details }}</p></td> {% endcomment %}
                 <td>{{ result.created }}</td>
             </tr>
             {% endfor %}

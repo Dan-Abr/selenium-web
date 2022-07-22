@@ -19,7 +19,7 @@ class TestAuthViews(TestCase):
     home_page_url = None
 
     def setUp(self):
-        self.home_pate_url = reverse('e2e-test-results-list')
+        self.home_pate_url = reverse('results-e2e-tests')
 
         self.login_url = reverse('user-login')
         self.logout_url = reverse('user-logout')
