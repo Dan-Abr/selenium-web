@@ -5,8 +5,6 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 # Django
 from django.contrib.auth.models import User
@@ -25,26 +23,28 @@ def crawl_website(user_pk, url, tasks):
 
     # System Settings
     driver = webdriver.Chrome(executable_path='./chromedriver', chrome_options=user_options)
-    
+    page_title = None
+
     # Open URL
     timeout = 30
     error_list = []
     try:
         driver.get(url)
         driver.set_page_load_timeout(timeout)
+        page_title = driver.title
     except TimeoutException:
         error_list.append("Timeout.")
 
     # Perform crawling tasks (wait, click)
-    error_list = perform_actions(driver, tasks, timeout, error_list)
+    error_list = perform_actions(driver, tasks, error_list)
     # Quit
     driver.quit()
 
     # Summarize results
-    post_results_to_db(user, url, error_list)
+    post_results_to_db(user, page_title, url, error_list)
 
 
-def perform_actions(driver, tasks, timeout, error_list):
+def perform_actions(driver, tasks, error_list):
     # Perform crawling tasks (wait, click)
     for task in tasks:
         # Each task has only one dict inside
@@ -73,11 +73,11 @@ def perform_actions(driver, tasks, timeout, error_list):
     return error_list
 
 
-def post_results_to_db(user, url, error_list):
+def post_results_to_db(user, title, url, error_list):
     if len(error_list) == 0:
         E2ETestResultsModel.objects.create(
             url=url,
-            page_title="title",
+            page_title=title,
             status="Success",
             # e2e_test_params = test_id,
             user=user,
@@ -85,7 +85,7 @@ def post_results_to_db(user, url, error_list):
     else:
         E2ETestResultsModel.objects.create(
             url=url,
-            page_title="title",
+            page_title=title,
             status="Failed",
             failed_details="".join(str(error) for error in error_list),
             # failed_details="Failed",
