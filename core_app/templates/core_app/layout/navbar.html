@@ -5,30 +5,147 @@
     </button>
   
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+      {% url 'create-e2e-test' as create_e2e_test %}
+      {% url 'manage-e2e-tests' as manage_e2e_tests %}
+      {% url 'results-e2e-tests' as results_e2e_tests %}
+      {% url 'edit-e2e-test' as edit_e2e_tests %}
+      {% url 'delete-e2e-test' as delete_e2e_test %}
+      
+      {% url 'user-register' as user_register %}
+      {% url 'user-login' as user_login %}
+      {% url 'user-settings' as user_settings %}
+      {% url 'user-change-password' as user_change_password %}
       <ul class="navbar-nav mr-auto">
         {% if request.user.is_authenticated %}
-        <li class="nav-item active">
-          <a class="nav-link" href="{% url "create-e2e-test" %}">Create Task</span></a>
-        </li>
-        <li class="nav-item active">
-          <a class="nav-link" href="{% url "manage-e2e-tests" %}">Manage Tasks</span></a>
-        </li>
-        <li class="nav-item active">
-          <a class="nav-link" href="{% url "results-e2e-tests" %}">Results</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url "user-settings" %}">Edit Profile</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url "user-logout" %}">Logout</a>
-        </li>
+          {% if request.path == create_e2e_test %}
+          <li class="nav-item">
+            <a class="nav-link active" href="{% url "create-e2e-test" %}">Create Task</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "manage-e2e-tests" %}">Manage Tasks</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "results-e2e-tests" %}">Results</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "user-settings" %}">Edit Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "user-logout" %}">Logout</a>
+          </li>
+          {% elif request.path == manage_e2e_tests %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "create-e2e-test" %}">Create Task</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="{% url "manage-e2e-tests" %}">Manage Tasks</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "results-e2e-tests" %}">Results</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "user-settings" %}">Edit Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "user-logout" %}">Logout</a>
+          </li>
+          {% elif request.path == edit_e2e_tests %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "create-e2e-test" %}">Create Task</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "manage-e2e-tests" %}">Manage Tasks</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "results-e2e-tests" %}">Results</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="{% url "user-settings" %}">Edit Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "user-logout" %}">Logout</a>
+          </li>
+          {% elif request.path == results_e2e_tests %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "create-e2e-test" %}">Create Task</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "manage-e2e-tests" %}">Manage Tasks</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="{% url "results-e2e-tests" %}">Results</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "user-settings" %}">Edit Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "user-logout" %}">Logout</a>
+          </li>
+          {% elif request.path == delete_e2e_test %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "create-e2e-test" %}">Create Task</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "manage-e2e-tests" %}">Manage Tasks</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "results-e2e-tests" %}">Results</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "user-settings" %}">Edit Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "user-logout" %}">Logout</a>
+          </li>
+          {% elif request.path == user_settings %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "create-e2e-test" %}">Create Task</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "manage-e2e-tests" %}">Manage Tasks</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "results-e2e-tests" %}">Results</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="{% url "user-settings" %}">Edit Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "user-logout" %}">Logout</a>
+          </li>
+          {% elif request.path == user_change_password %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "create-e2e-test" %}">Create Task</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "manage-e2e-tests" %}">Manage Tasks</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "results-e2e-tests" %}">Results</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="{% url "user-settings" %}">Edit Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "user-logout" %}">Logout</a>
+          </li>
+          {% endif %}
         {% else %}
-        <li class="nav-item">
-          <a class="nav-link" href="{% url "user-register" %}">Register</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url "user-login" %}">Login</a>
-        </li>
+          {% if request.path == user_login %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "user-register" %}">Register</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="{% url "user-login" %}">Login</a>
+          </li>
+          {% elif request.path == user_register %}
+          <li class="nav-item">
+            <a class="nav-link active" href="{% url "user-register" %}">Register</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "user-login" %}">Login</a>
+          </li>
+          {% endif %}
          {% endif %}
       </ul>
     </div>
