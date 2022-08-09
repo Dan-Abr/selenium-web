@@ -1,6 +1,3 @@
-# third-party
-from django_celery_beat.models import PeriodicTask, IntervalSchedule
-
 # Django
 from django.test import TransactionTestCase
 

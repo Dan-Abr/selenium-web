@@ -3,7 +3,6 @@ import time
 
 # third-party
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 
 # Django
@@ -88,7 +87,6 @@ def post_results_to_db(user, title, url, error_list):
             page_title=title,
             status="Failed",
             failed_details="".join(str(error) for error in error_list),
-            # failed_details="Failed",
             # e2e_test_params = test_id,
             user=user,
         )

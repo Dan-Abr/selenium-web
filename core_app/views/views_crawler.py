@@ -33,7 +33,7 @@ DELETE_TEST_CONFIRM_TEMPLATE = 'core_app/e2e-tests/delete-confirm.html'
 class CreateE2ETestView(LoginRequiredMixin, View):
     """Allow creating new tests.
     The class has two methods:
-    GET - new an empty form for creating new e2e-tests.
+    GET - get a new empty form for creating new e2e-tests.
     POST - let the user create a new e2e-tests.
     """
 
@@ -49,7 +49,7 @@ class CreateE2ETestView(LoginRequiredMixin, View):
         return render(request, CREATE_TEST_TEMPLATE, context)
 
     def post(self, request, *args, **kwargs):
-        # Show all scheduled e2e-tests
+        # After creating a test, redirect to the page of managing all tests
         all_scheduled_tests = E2ETestParamsModel.objects.filter(user=request.user).order_by('-created')
 
         # Will be used to name the tests in the database with incremental numbers
