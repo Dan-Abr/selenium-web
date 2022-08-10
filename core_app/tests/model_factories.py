@@ -4,18 +4,20 @@ import string
 
 # third-party
 import factory
+from faker import Faker
 from django_celery_beat.models import PeriodicTask, IntervalSchedule
 
 # local Django
 from ..models import *
 
 
+fake = Faker()
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
         django_get_or_create = ('username',)
 
-    username = 'John'
+    username = fake.name()
 
 
 class IntervalScheduleFactory(factory.django.DjangoModelFactory):
