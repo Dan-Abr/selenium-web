@@ -111,7 +111,7 @@ class TestAuthViews(TestCase):
             e2e_test_params_edit,
             follow=True,
         )
-        # New URL still the same?
+        # Does the URL still the same?
         self.assertContains(post_response, 'https://bing.com')
         self.assertNotContains(post_response, 'non_url')
 
