@@ -20,6 +20,7 @@ from django.contrib.auth.decorators import login_required
 # local Django
 from .views.views_crawler import *
 from .views.views_auth import *
+from . import api
 
 
 urlpatterns = [
@@ -52,4 +53,7 @@ urlpatterns = [
     path('edit-test/<int:pk>/delete',  
          login_required(login_url='/login/')(DeleteE2ETestView.as_view()), 
          name='delete-e2e-test'),
+
+     # API
+     path('api/e2e-tests', api.E2ETestParamsList.as_view(), name='api-e2e-tests-list'),
 ]

@@ -20,7 +20,6 @@ class E2ETestParamsModel(models.Model):
     start_date = models.DateField(default=datetime.today())
     end_date = models.DateField(blank=True, null=True)
     enabled = models.BooleanField(default=True)
-    # ... list_of actions = []
     
     periodic_task = models.OneToOneField(PeriodicTask, db_index=True, on_delete=models.CASCADE)
     user = models.ForeignKey(User, db_index=True, on_delete=models.CASCADE)
