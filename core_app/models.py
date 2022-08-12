@@ -43,8 +43,8 @@ class E2ETestResultsModel(models.Model):
     url = models.TextField()
     page_title = models.CharField(max_length=200)
     status = models.CharField(max_length=10)
-    failed_details = models.CharField(blank=True, null=True, max_length=120)
-
+    error_list = models.CharField(blank=True, null=True, max_length=120)
+    
     user = models.ForeignKey(User, db_index=True, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
