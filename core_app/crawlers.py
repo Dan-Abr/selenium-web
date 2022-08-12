@@ -85,7 +85,7 @@ def post_results_to_db(user, title, url, error_list):
             url=url,
             page_title=title,
             status="Failed",
-            failed_details="".join(str(error) for error in error_list),
+            error_list="".join(str(error) for error in error_list),
             # e2e_test_params = test_id,
             user=user,
         )

@@ -58,6 +58,6 @@ class TestCrawler(TestCase):
         tasks = [{'2': 'invalid_xpath'}]
         # Act
         crawl_website(user_pk, url, tasks)
-        errors = E2ETestResultsModel.objects.filter(user=user_pk).values_list('failed_details', flat=True)
+        errors = E2ETestResultsModel.objects.filter(user=user_pk).values_list('error_list', flat=True)
         # Assert
         self.assertTrue(len(errors) > 0)

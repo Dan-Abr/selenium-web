@@ -71,5 +71,5 @@ class E2ETestResultsFactory(factory.django.DjangoModelFactory):
     url = "https://google.com"
     page_title = "Google"
     status = "Success"
-    # failed_details = models.CharField(blank=True, null=True, max_length=120)
+    # error_list = models.CharField(blank=True, null=True, max_length=120)
     user = factory.SubFactory(UserFactory)
