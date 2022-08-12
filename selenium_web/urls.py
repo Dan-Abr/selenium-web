@@ -25,9 +25,10 @@ from django.conf import settings
 urlpatterns = [
     path('', include('core_app.urls')),
     path('admin/', admin.site.urls),
+    
     # API schema (Open API)
     path('apischema/', get_schema_view(
-        title='Social-web REST API',
+        title='Selenium-web REST API',
         description='API for interacting with users records',
         version='1.0',
     ), name='openapi-schmea'),

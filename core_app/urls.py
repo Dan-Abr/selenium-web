@@ -24,7 +24,7 @@ from . import api
 
 
 urlpatterns = [
-    # Auth
+    # Auth pages
     path('register/', UserRegisterView.as_view(), name='user-register'),
     path('login/', UserLoginView.as_view(), name='user-login'),
     path('logout/', 
@@ -37,7 +37,7 @@ urlpatterns = [
          login_required(login_url='/login/')(UserPasswordChangeView.as_view()), 
          name='user-change-password'),
 
-    # App
+    # Selenium-web app
     path('',  
          login_required(login_url='/login/')(E2ETestResultsListView.as_view()), 
          name='results-e2e-tests'),
@@ -54,7 +54,7 @@ urlpatterns = [
          login_required(login_url='/login/')(DeleteE2ETestView.as_view()), 
          name='delete-e2e-test'),
 
-     # API
+     # API endpoints
      path('api/e2e-tests', api.E2ETestParamsList.as_view(), name='api-e2e-tests-list'),
      path('api/e2e-tests/<int:pk>', api.E2ETestParamsID.as_view(), name='api-e2e-test'),
      path('api/e2e-test-results', api.E2ETestResultsList.as_view(), name='api-e2e-test-results-list'),
