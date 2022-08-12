@@ -36,6 +36,7 @@ def crawl_website(user_pk, url, tasks):
 
     # Perform crawling tasks (wait, click)
     error_list = perform_actions(driver, tasks, error_list)
+    
     # Quit
     driver.quit()
 
@@ -52,21 +53,19 @@ def perform_actions(driver, tasks, error_list):
         # Microsoft VSCode isn't supporting its syntax yet.
         # Source: https://github.com/microsoft/vscode-python/issues/17745
         if(task[0] == '1'):
-            # Wait
+            # Wait action/event
             try:
                 time.sleep(task[1])
             except TimeoutException:
                 error_list.append("Timeout.")
-                # driver.quit()
             except Exception as e:
                 error_list.append(str(e))
         elif(task[0] == '2'):
-            # Click
+            # Click action/event
             try:
                 driver.find_element_by_xpath(task[1]).click()
             except TimeoutException as e:
                 error_list.append("Timeout.")
-                # driver.quit()
             except Exception as e:
                 error_list.append(str(e))
     return error_list
@@ -90,5 +89,3 @@ def post_results_to_db(user, title, url, error_list):
             # e2e_test_params = test_id,
             user=user,
         )
-
-
