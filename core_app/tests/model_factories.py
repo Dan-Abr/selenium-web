@@ -37,7 +37,7 @@ class PeriodicTaskFactory(factory.django.DjangoModelFactory):
     # Random incremental string for the name
     name = factory.sequence(lambda n: ''.join([choice(string.ascii_lowercase)]))
     task = 'core_app.tasks.call_crawl_website'
-    start_time = factory.LazyFunction(datetime.now)
+    start_time = date.today().strftime('%Y-%m-%d')
     expires = None
     one_off=False
 
@@ -48,7 +48,7 @@ class E2ETestParamsFactory(factory.django.DjangoModelFactory):
 
     url = "https://google.com"
     launches_per_day = randint(0,1440) # 0?
-    start_date = factory.LazyFunction(datetime.now)
+    start_date = date.today().strftime('%Y-%m-%d')
     enabled = True
     periodic_task = factory.SubFactory(PeriodicTaskFactory)
     user = factory.SubFactory(UserFactory)
