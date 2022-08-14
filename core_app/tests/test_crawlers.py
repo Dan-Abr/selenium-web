@@ -9,6 +9,12 @@ from ..models import E2ETestResultsModel
 
 # Note: These tests will fail if the Chromedriver's version is not  
 # matched to the installed Chrome version on the local machine.
+# Chromedriver can be downloaded from here:
+# https://chromedriver.chromium.org/downloads
+
+# Since it is aimed to be implemented on a server or self-hosted,
+# such as raspberry pi, the application was tested on Linux (Debian, Ubuntu).
+# I did not test the application on Windows or MacOS.
 class TestCrawler(TestCase):
     user_dummy_credentials_1 = None
 
@@ -61,3 +67,5 @@ class TestCrawler(TestCase):
         errors = E2ETestResultsModel.objects.filter(user=user_pk).values_list('error_list', flat=True)
         # Assert
         self.assertTrue(len(errors) > 0)
+
+    

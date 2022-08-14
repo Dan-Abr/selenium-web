@@ -56,7 +56,7 @@ urlpatterns = [
 
      # API endpoints
      path('api/e2e-tests', api.E2ETestParamsList.as_view(), name='api-e2e-tests-list'),
-     path('api/e2e-tests/<int:pk>', api.E2ETestParamsID.as_view(), name='api-e2e-test'),
+     path('api/e2e-test/<int:pk>', api.E2ETestParamsID.as_view(), name='api-e2e-test-id'),
      path('api/e2e-test-results', api.E2ETestResultsList.as_view(), name='api-e2e-test-results-list'),
-     path('api/e2e-test-results/<int:pk>', api.E2ETestResultID.as_view(), name='api-e2e-test-result'),
+     path('api/e2e-test-result/<int:pk>', api.E2ETestResultID.as_view(), name='api-e2e-test-result-id'),
 ]
