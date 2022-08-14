@@ -1,5 +1,4 @@
 # standard library
-import datetime
 import json
 
 # third-party
@@ -85,7 +84,7 @@ class APITest(APITestCase):
         e2e_test = E2ETestParamsFactory.create(user=self.user_dummy_1)
         # Verify e2e-test's parameters are returned.
         url = reverse('api-e2e-test-id', kwargs={'pk': e2e_test.pk})
-        date_now = datetime.now().strftime('%Y-%m-%d')
+        date_now = date.today().strftime('%Y-%m-%d')
         response = self.client.get(url)
         response.render()
         self.assertEqual(response.status_code, 200)
