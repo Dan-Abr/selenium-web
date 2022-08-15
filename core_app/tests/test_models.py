@@ -44,7 +44,7 @@ class TestModels(TestCase):
         self.e2e_test_results_1 = E2ETestResultsModel.objects.create(url='https://google.com', 
                                                                page_title='title', 
                                                                status='Passed',
-                                                            #    e2e_test_params=self.e2e_test_params_1,
+                                                               e2e_test_params_pk=self.e2e_test_params_1.pk,
                                                                user=self.user_dummy_1
                                                                )
 
@@ -58,25 +58,44 @@ class TestModels(TestCase):
 
     # ------------ Tests start here ------------
     def test_E2ETestParamsModel_successfully_added_entry_to_db(self):
-        # Verify the E2E test was added to the database
+        # Verify the E2ETestParams was added to the database
         e2e_test_params = E2ETestParamsModel.objects.get(pk=1)
         self.assertEqual(e2e_test_params.url, 'https://google.com')
 
 
     def test_E2ETestParamsModel_has_user_field(self):
-        # Verify the E2E test was added to the database
+        # Verify the E2ETestParams was added to the database
         e2e_test_params = E2ETestParamsModel.objects.get(pk=1)
         self.assertEqual(e2e_test_params.user.username, 'test_user1')
 
 
     def test_E2ETestResultsModel_successfully_added_entry_to_db(self):
-        # Verify the E2E test results added to the database
+        # Verify the E2ETestResults added to the database
         e2e_test_results = E2ETestResultsModel.objects.get(pk=1)
         self.assertEqual(e2e_test_results.url, 'https://google.com')
 
-    
-    def test_E2ETestParamsModel_entry_deleted_when_its_periodic_task_field_deleted(self):
-        # Test exists
+
+    def test_E2ETestResultsModel_is_not_deleted_when_its_E2ETestParamsModel_field_is_deleted(self):
+        # Create end-to-end test
+        e2e_test_results = E2ETestResultsModel.objects.get(pk=1)
+        self.assertEqual(e2e_test_results.url, 'https://google.com')
+        # Delete e2e_test_params
+        E2ETestParamsModel.objects.get(pk=1).delete()
+        e2e_test_results = None
+        # E2ETestResultsModel entry should not be deleted
+        try:
+            # Object should not be deleted
+            e2e_test_results = E2ETestResultsModel.objects.get(pk=1)
+        except:
+            # Should be None
+            e2e_test_results = None
+        self.assertIsNotNone(e2e_test_results)
+        # E2ETestResultsModel has access to the pk of a deleted E2ETestParamsModel
+        self.assertEqual(e2e_test_results.e2e_test_params_pk, 1)
+
+
+    def test_E2ETestParamsModel_entry_deleted_when_its_PeriodicTask_field_deleted(self):
+        # Create end-to-end test
         e2e_test_params = E2ETestParamsModel.objects.get(pk=1)
         self.assertEqual(e2e_test_params.url, 'https://google.com')
         # Delete periodic_task
@@ -92,8 +111,33 @@ class TestModels(TestCase):
         self.assertIsNone(e2e_test_params)
 
 
+    def test_E2ETestParamsModel_entry_deleted_when_its_User_field_deleted(self):
+        # Create end-to-end test
+        e2e_test_params = E2ETestParamsModel.objects.get(pk=1)
+        self.assertEqual(e2e_test_params.url, 'https://google.com')
+        # Delete user
+        User.objects.get(pk=1).delete()
+        # E2ETestParamsModel entry should be deleted as well
+        e2e_test_params = None
+        try:
+            # Object should be deleted
+            e2e_test_params = E2ETestParamsModel.objects.get(pk=1)
+        except:
+            # Should be None
+            e2e_test_params = None
+        self.assertIsNone(e2e_test_params)
+
+
     def test_E2ETestActionModel_successfully_added_entry_db(self):
-        # Verify ActionMode was added to the database
+        # Verify E2ETestActionMode was added to the database
         action_type_db_entry = E2ETestActionModel.objects.create(event_type = 1,
                                                                  e2e_test_params = self.e2e_test_params_1)
         self.assertEqual(action_type_db_entry.event_type, 1)
+
+
+    def test_E2ETestActionModel_can_access_its_E2ETestParamsModel_fields(self):
+        # Verify E2ETestParamsModel is accessible from  E2ETestActionModel
+        action_type_db_entry = E2ETestActionModel.objects.create(event_type = 1,
+                                                                 e2e_test_params = self.e2e_test_params_1)
+        self.assertEqual(action_type_db_entry.e2e_test_params.url, 'https://google.com')
+        self.assertEqual(action_type_db_entry.e2e_test_params.user.username, 'test_user1')

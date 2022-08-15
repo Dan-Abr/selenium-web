@@ -73,3 +73,4 @@ class E2ETestResultsFactory(factory.django.DjangoModelFactory):
     status = "Success"
     # error_list = models.CharField(blank=True, null=True, max_length=120)
     user = factory.SubFactory(UserFactory)
+    e2e_test_params_pk = randint(0,100)

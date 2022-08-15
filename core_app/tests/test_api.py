@@ -179,6 +179,7 @@ class APITest(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['url'], e2e_test_result.url)
         self.assertEqual(response.data['user'], e2e_test_result.user.pk)
+        self.assertEqual(response.data['e2e_test_params_pk'], e2e_test_result.e2e_test_params_pk)
         self.assertEqual(response.data['page_title'], e2e_test_result.page_title)
         self.assertEqual(response.data['status'], e2e_test_result.status)
 
@@ -210,6 +211,7 @@ class APITest(APITestCase):
             'url': "https://www.bing.com",  # Change Google to Bing
             'user': e2e_test_result.user.pk,
             'page_title': e2e_test_result.page_title,
+            'e2e_test_params_pk': e2e_test.pk,
             'status': e2e_test_result.status,
             'created': e2e_test_result.created,
             'updated': e2e_test_result.updated,

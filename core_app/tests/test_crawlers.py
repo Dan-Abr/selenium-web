@@ -36,21 +36,23 @@ class TestCrawler(TestCase):
     def test_crawl_website_launch_chrome_instance(self):
         # Arrange
         user_pk = 1
+        e2e_test_pk = 0
         url = 'https://www.google.com'
         tasks = [{'1': 1}]
         # Act
-        crawl_website(user_pk, url, tasks)
+        crawl_website(user_pk, e2e_test_pk, url, tasks)
         # Assert
         self.assertTrue(True)
     
     def test_crawl_website_will_not_launch_with_invalid_user(self):
         # Arrange
         user_pk = 2
+        e2e_test_pk = 0
         url = 'https://www.google.com'
         tasks = [{'1': 1}]
         # Act
         try:
-            crawl_website(user_pk, url, tasks)
+            crawl_website(user_pk, e2e_test_pk, url, tasks)
             # Assert: the test shouldn't pass since user_pk 2 doesn't exist.
             self.assertTrue(False)
         except Exception as e:
@@ -60,10 +62,11 @@ class TestCrawler(TestCase):
     def test_crawl_website_will_return_list_of_errors_if_invalid_XPath(self):
         # Arrange
         user_pk = 1
+        e2e_test_pk = 0
         url = 'https://www.google.com'
         tasks = [{'2': 'invalid_xpath'}]
         # Act
-        crawl_website(user_pk, url, tasks)
+        crawl_website(user_pk, e2e_test_pk, url, tasks)
         errors = E2ETestResultsModel.objects.filter(user=user_pk).values_list('error_list', flat=True)
         # Assert
         self.assertTrue(len(errors) > 0)

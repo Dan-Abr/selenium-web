@@ -44,7 +44,10 @@ class E2ETestResultsModel(models.Model):
     page_title = models.CharField(max_length=200)
     status = models.CharField(max_length=10)
     error_list = models.CharField(blank=True, null=True, max_length=120)
-    
+    # Not as foreign key since it might be deleted and it should not 
+    # affect the saved results.
+    e2e_test_params_pk = models.IntegerField(max_length=12)
+
     user = models.ForeignKey(User, db_index=True, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

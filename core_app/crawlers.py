@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 from .models import E2ETestResultsModel
 
 
-def crawl_website(user_pk, url, tasks):
+def crawl_website(user_pk, e2e_test_pk, url, tasks):
     # The user who requested the task
     user = User.objects.get(pk=user_pk)
 
@@ -41,7 +41,7 @@ def crawl_website(user_pk, url, tasks):
     driver.quit()
 
     # Summarize results
-    post_results_to_db(user, page_title, url, error_list)
+    post_results_to_db(user, e2e_test_pk, page_title, url, error_list)
 
 
 def perform_actions(driver, tasks, error_list):
@@ -71,13 +71,13 @@ def perform_actions(driver, tasks, error_list):
     return error_list
 
 
-def post_results_to_db(user, title, url, error_list):
+def post_results_to_db(user, e2e_test_pk, title, url, error_list):
     if len(error_list) == 0:
         E2ETestResultsModel.objects.create(
             url=url,
             page_title=title,
             status="Success",
-            # e2e_test_params = test_id,
+            e2e_test_params_pk = e2e_test_pk,
             user=user,
         )
     else:
@@ -86,6 +86,6 @@ def post_results_to_db(user, title, url, error_list):
             page_title=title,
             status="Failed",
             error_list="".join(str(error) for error in error_list),
-            # e2e_test_params = test_id,
+            e2e_test_params_pk = e2e_test_pk,
             user=user,
         )

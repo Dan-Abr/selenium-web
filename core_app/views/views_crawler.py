@@ -88,8 +88,9 @@ class CreateE2ETestView(LoginRequiredMixin, View):
                 interval=schedule,
                 name=str(request.user)+'_e2e-test_'+str(user_tests_count),
                 task='core_app.tasks.call_crawl_website',
-                kwargs=json.dumps({'url': request.POST.get('url'), 
-                                   'user_pk': request.user.pk, 
+                kwargs=json.dumps({'user_pk': request.user.pk,
+                                   'e2e_test_pk': e2e_test_params.pk,
+                                   'url': request.POST.get('url'), 
                                    'tasks': e2e_test_actions,}),
                 start_time = request.POST.get('start_date'),
                 expires = None if request.POST.get('end_date') == "" else request.POST.get('end_date'),
@@ -208,8 +209,9 @@ class EditE2ETestView(LoginRequiredMixin, View):
             periodic_task.enabled = True if request.POST.get('enabled') == "on" else False
             periodic_task.interval = schedule
             periodic_task.expires = None if request.POST.get('end_date') == "" else request.POST.get('end_date')
-            periodic_task.kwargs = json.dumps({'url': request.POST.get('url'), 
-                                               'user_pk': request.user.pk, 
+            periodic_task.kwargs = json.dumps({'user_pk': request.user.pk,
+                                               'e2e_test_pk': e2e_test_params.pk,
+                                               'url': request.POST.get('url'),
                                                'tasks': e2e_test_actions,})
             periodic_task.save()
 
