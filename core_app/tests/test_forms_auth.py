@@ -27,7 +27,7 @@ class TestUserPasswordChangeForm(TransactionTestCase):
 
 
     def test_password_change_valid_form_returns_valid_response(self):
-        # print("---------------------------------")
+        # print("-------------DEBUG---------------")
         # print(self.form.errors)
         # print("---------------------------------")
         self.assertTrue(self.form.is_valid())
@@ -58,7 +58,7 @@ class TestUserRegisterForm(TransactionTestCase):
 
 
     def test_register_valid_form_returns_valid_response(self):
-        # print("---------------------------------")
+        # print("-------------DEBUG---------------")
         # print(self.form.errors)
         # print("---------------------------------")
         self.assertTrue(self.form.is_valid())
@@ -87,7 +87,7 @@ class TestUserLoginForm(TransactionTestCase):
 
 
     def test_login_valid_form_returns_valid_response(self):
-        # print("---------------------------------")
+        # print("-------------DEBUG---------------")
         # print(self.form.errors)
         # print("---------------------------------")
         self.assertTrue(self.form.is_valid())

@@ -56,18 +56,25 @@ class TestAuthViews(TestCase):
         num = User.objects.all().count()
         self.assertEquals(num, 1)
 
-
     def test_GET_add_e2e_test_url(self):
         # Logged-in user can fetch inner pages
         response = self.client.get(self.create_e2e_test_url)
         self.assertEqual(response.status_code, 200)
+    
+    def test_GET_e2e_test_results_url(self):
+        # Logged-in user can fetch inner pages
+        response = self.client.get(self.e2e_test_results_list_url)
+        self.assertEqual(response.status_code, 200)
 
-       
+    def test_GET_user_settings_url(self):
+        # Logged-in user can fetch inner pages
+        response = self.client.get(self.user_settings_url)
+        self.assertEqual(response.status_code, 200)
+
     def test_FACTORY_e2e_test_with_valid_data_should_pass(self):
         e2e_test_params = E2ETestParamsFactory.create(url='https://bing.com')
         result = get_object_or_404(E2ETestParamsModel, pk=1)
         self.assertEqual(result.url, 'https://bing.com')
-
 
     def test_FACTORY_edit_e2e_test_with_valid_data_should_pass(self):
         e2e_test_params = E2ETestParamsFactory.create(url='https://bing.com')
@@ -77,6 +84,19 @@ class TestAuthViews(TestCase):
         result = get_object_or_404(E2ETestParamsModel, pk=1)
         self.assertEqual(result.url, 'https://google.com')
 
+    def test_FACTORY_edit_e2e_test_with_invalid_data_should_fail(self):
+        e2e_test_params = E2ETestParamsFactory.create(url='https://bing.com')
+        # Edit with invalid URL
+        e2e_test_params_edit = forms_crawler.E2ETestParamsForm(instance=e2e_test_params).initial
+        e2e_test_params_edit['url'] = 'https://'  # Invalid URL
+        e2e_test_params_edit['end_date'] = ''
+        post_response = self.client.post(
+            reverse('edit-e2e-test', args=(e2e_test_params.id,)),
+            e2e_test_params_edit,
+            follow=True,
+        )
+        # URL still the same?
+        self.assertContains(post_response, 'https://bing.com')
 
     def test_POST_edit_e2e_test_with_valid_data_should_pass(self):
         e2e_test_params = E2ETestParamsFactory.create(url='https://bing.com')
@@ -96,7 +116,6 @@ class TestAuthViews(TestCase):
         self.assertContains(post_response, 'https://google.co.uk')
         self.assertNotContains(post_response, 'https://bing.com')
 
-
     def test_POST_edit_e2e_test_with_invalid_data_should_fail(self):
         e2e_test_params = E2ETestParamsFactory.create(url='https://bing.com')
         # Does the response contain the URL above?
@@ -115,7 +134,6 @@ class TestAuthViews(TestCase):
         self.assertContains(post_response, 'https://bing.com')
         self.assertNotContains(post_response, 'non_url')
 
-
     def test_POST_delete_e2e_test_should_pass(self):
         e2e_test_params = E2ETestParamsFactory.create(url='https://bing.com')
         # Does the deletion page shows a warning message of deletion?
@@ -124,3 +142,4 @@ class TestAuthViews(TestCase):
         # Redirect after deletion
         post_response = self.client.post(reverse('delete-e2e-test', args=(e2e_test_params.id,)), follow=True)
         self.assertRedirects(post_response, reverse('manage-e2e-tests'), status_code=302)
+
