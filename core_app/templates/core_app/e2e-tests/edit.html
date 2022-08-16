@@ -12,7 +12,7 @@
                 {% endif %}
             {% endfor %}
     {% endif %}
-    <form id="e2e_test_params__form" class="form-horizontal" action="{% url 'edit-e2e-test' e2e_test.id %}" method="post" enctype="multipart/form-data">
+    <form id="e2e_test_params__form" class="form-horizontal" action="{% url 'edit-e2e-test' e2e_test_params.id %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             
             <div class="form-group">
@@ -54,7 +54,7 @@
         <div class="row spacer">
             <div class="col-4">
                 <button type="button" onclick="location.href='{% url "manage-e2e-tests" %}'" class="btn btn-block btn-secondary">Back</button>
-                <button type="button" onclick='location.href="{% url 'delete-e2e-test' e2e_test.id %}"' class="btn btn-block btn-danger">Delete</button>
+                <button type="button" onclick='location.href="{% url 'delete-e2e-test' e2e_test_params.id %}"' class="btn btn-block btn-danger">Delete</button>
                 <button type="submit" class="btn btn-block btn-primary">Update</button>
             </div>
         </div>

@@ -89,7 +89,7 @@ class CreateE2ETestView(LoginRequiredMixin, View):
                 name=str(request.user)+'_e2e-test_'+str(user_tests_count),
                 task='core_app.tasks.call_crawl_website',
                 kwargs=json.dumps({'user_pk': request.user.pk,
-                                   'e2e_test_pk': e2e_test_params.pk,
+                                   'e2e_test_params_pk': e2e_test_params.pk,
                                    'url': request.POST.get('url'), 
                                    'tasks': e2e_test_actions,}),
                 start_time = request.POST.get('start_date'),
@@ -153,17 +153,17 @@ class EditE2ETestView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         # Get the chosen e2e-test with its current settings (fields)
         pk = self.kwargs.get('pk')
-        e2e_test = E2ETestParamsModel.objects.get(pk=pk)
+        e2e_test_params = E2ETestParamsModel.objects.get(pk=pk)
         # Latest actions should be last
-        e2e_test_actions = E2ETestActionModel.objects.filter(e2e_test_params=e2e_test).order_by('-created').reverse()
+        e2e_test_actions = E2ETestActionModel.objects.filter(e2e_test_params=e2e_test_params).order_by('-created').reverse()
 
-        # instance=e2e_test will load the requested e2e-test form
+        # instance=e2e_test_params will load the requested e2e-test form
         # with pre-filled fields.
-        e2e_test_params__form = E2ETestParamsForm(instance=e2e_test)
+        e2e_test_params__form = E2ETestParamsForm(instance=e2e_test_params)
         e2e_test_action__formset = E2ETestActionFormsetEditValidation(queryset=e2e_test_actions)
 
         context = {
-            'e2e_test': e2e_test,
+            'e2e_test_params': e2e_test_params,
             'e2e_test_params__form': e2e_test_params__form,
             'e2e_test_actions': e2e_test_actions,
             'e2e_test_action__formset': e2e_test_action__formset,
@@ -175,8 +175,8 @@ class EditE2ETestView(LoginRequiredMixin, View):
         """Update e2e-test settings.
         """
         # Get the chosen e2e-test with its current settings (fields)
-        e2e_test_pk = self.kwargs.get('pk')
-        e2e_test = E2ETestParamsModel.objects.get(pk=e2e_test_pk)
+        e2e_test_params_pk = self.kwargs.get('pk')
+        e2e_test_params = E2ETestParamsModel.objects.get(pk=e2e_test_params_pk)
         
         # Calculate form variables for the Celery task (& database storage)
         launches_per_day_raw = float(request.POST.get('launches_per_day'))
@@ -188,7 +188,7 @@ class EditE2ETestView(LoginRequiredMixin, View):
         )
 
         # Create database-entry object
-        e2e_test_params__form = E2ETestParamsForm(request.POST, instance=e2e_test) 
+        e2e_test_params__form = E2ETestParamsForm(request.POST, instance=e2e_test_params) 
         e2e_test_action__formset = E2ETestActionFormsetEditValidation(request.POST)
 
         # POST the entry to database
@@ -204,13 +204,13 @@ class EditE2ETestView(LoginRequiredMixin, View):
                 e2e_test_actions.append(e2e_test_action_form_to_dict(e2e_test_action))
 
             # Get the according Celery task from beat's PeriodicTask table
-            periodic_task = PeriodicTask.objects.get(pk=e2e_test.periodic_task.id)
+            periodic_task = PeriodicTask.objects.get(pk=e2e_test_params.periodic_task.id)
             # Update values in the Celery task
             periodic_task.enabled = True if request.POST.get('enabled') == "on" else False
             periodic_task.interval = schedule
             periodic_task.expires = None if request.POST.get('end_date') == "" else request.POST.get('end_date')
             periodic_task.kwargs = json.dumps({'user_pk': request.user.pk,
-                                               'e2e_test_pk': e2e_test_params.pk,
+                                               'e2e_test_params_pk': e2e_test_params.pk,
                                                'url': request.POST.get('url'),
                                                'tasks': e2e_test_actions,})
             periodic_task.save()
@@ -236,12 +236,12 @@ class EditE2ETestView(LoginRequiredMixin, View):
             messages.error(request, 'Please fix the issues below.')
 
         # Latest actions should be last
-        e2e_test_actions = E2ETestActionModel.objects.filter(e2e_test_params=e2e_test).order_by('-created').reverse()
-        e2e_test_params__form = E2ETestParamsForm(instance=e2e_test)
+        e2e_test_actions = E2ETestActionModel.objects.filter(e2e_test_params=e2e_test_params).order_by('-created').reverse()
+        e2e_test_params__form = E2ETestParamsForm(instance=e2e_test_params)
         e2e_test_action__formset = E2ETestActionFormsetEditValidation(queryset=e2e_test_actions)
         
         context = {
-            'e2e_test': e2e_test,
+            'e2e_test_params': e2e_test_params,
             'e2e_test_params__form': e2e_test_params__form,
             'e2e_test_action__formset': e2e_test_action__formset
         }
@@ -253,25 +253,25 @@ class EditE2ETestView(LoginRequiredMixin, View):
 class DeleteE2ETestView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         # Get the chosen e2e-test with its current settings (fields)
-        e2e_test_pk = self.kwargs.get('pk')
-        e2e_test = E2ETestParamsModel.objects.get(pk=e2e_test_pk)
+        e2e_test_params_pk = self.kwargs.get('pk')
+        e2e_test_params = E2ETestParamsModel.objects.get(pk=e2e_test_params_pk)
 
         context = {
-            'e2e_test': e2e_test,
+            'e2e_test_params': e2e_test_params,
         }
         return render(request, DELETE_TEST_CONFIRM_TEMPLATE, context)
 
     def post(self, request, *args, **kwargs):
         # Get the chosen e2e-test with its current settings (fields)
-        e2e_test_pk = self.kwargs.get('pk')
-        e2e_test = E2ETestParamsModel.objects.get(pk=e2e_test_pk)
+        e2e_test_params_pk = self.kwargs.get('pk')
+        e2e_test_params = E2ETestParamsModel.objects.get(pk=e2e_test_params_pk)
         # Get the according Celery task from beat's PeriodicTask table
-        periodic_task = PeriodicTask.objects.get(pk=e2e_test.periodic_task.id)
+        periodic_task = PeriodicTask.objects.get(pk=e2e_test_params.periodic_task.id)
         # Delete both
-        e2e_test.delete()
+        e2e_test_params.delete()
         periodic_task.delete()
 
-        # Return to the tests' page
+        # Return to the e2e tests' page
         return redirect(reverse('manage-e2e-tests'))
 
 
