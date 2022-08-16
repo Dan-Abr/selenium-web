@@ -5,8 +5,10 @@ from datetime import date, datetime
 # Django
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
+# Crawler tasks
 ACTION_TYPE = (
     (1, ("wait")),
     (2, ("click")),
@@ -15,8 +17,9 @@ ACTION_TYPE = (
 
 class E2ETestParamsModel(models.Model):
     url = models.URLField()
-    launches_per_day = models.FloatField()
-    
+    # At least one test per day & max of one test per minute
+    launches_per_day = models.IntegerField(validators=[MinValueValidator(1),
+                                                       MaxValueValidator(1440)])
     start_date = models.DateField(default=datetime.today())
     end_date = models.DateField(blank=True, null=True)
     enabled = models.BooleanField(default=True)

@@ -47,7 +47,7 @@ class E2ETestParamsFactory(factory.django.DjangoModelFactory):
         model = E2ETestParamsModel
 
     url = "https://google.com"
-    launches_per_day = randint(0,1440) # 0?
+    launches_per_day = randint(1,1440)
     start_date = date.today().strftime('%Y-%m-%d')
     enabled = True
     periodic_task = factory.SubFactory(PeriodicTaskFactory)

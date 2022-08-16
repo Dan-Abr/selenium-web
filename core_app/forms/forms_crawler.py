@@ -23,7 +23,8 @@ class E2ETestParamsForm(forms.ModelForm):
         # Style with Bootstrap
         widgets = {
             'url': forms.URLInput(attrs={'class': 'form-control'}),
-            'launches_per_day': forms.NumberInput(attrs={'class': 'form-control'}), 
+            'launches_per_day': forms.NumberInput(attrs={'class': 'form-control',
+                                                         'min':'1', 'max':'1440'}), 
             'start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             # Allow end_date to be empty 
             'end_date': forms.DateInput(attrs={'class': 'form-control',  
