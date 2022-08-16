@@ -88,10 +88,6 @@ class CreateE2ETestView(LoginRequiredMixin, View):
                 interval=schedule,
                 name=str(request.user)+'_e2e-test_'+str(user_tests_count),
                 task='core_app.tasks.call_crawl_website',
-                kwargs=json.dumps({'user_pk': request.user.pk,
-                                   'e2e_test_params_pk': e2e_test_params.pk,
-                                   'url': request.POST.get('url'), 
-                                   'tasks': e2e_test_actions,}),
                 start_time = request.POST.get('start_date'),
                 expires = None if request.POST.get('end_date') == "" else request.POST.get('end_date'),
                 one_off=False,
@@ -105,6 +101,15 @@ class CreateE2ETestView(LoginRequiredMixin, View):
                 e2e_test_params.end_date = request.POST.get('end_date')
             e2e_test_params.periodic_task = periodic_task
             e2e_test_params.save()
+
+            # Update the PeriodicTask's parameters with the e2e-test instructions.
+            # Must be after saving e2e_test_params to the database to get its pk.
+            PeriodicTask.objects.filter(pk=periodic_task.pk).update(
+                                kwargs=json.dumps({'user_pk': request.user.pk,
+                                                   'e2e_test_params_pk': (e2e_test_params.pk),
+                                                   'url': request.POST.get('url'), 
+                                                   'tasks': e2e_test_actions,}),
+                                                 )
 
             # Save last to prevent data-loss in previous forms
             for form in e2e_test_action__formset:
@@ -221,7 +226,7 @@ class EditE2ETestView(LoginRequiredMixin, View):
             if type(request.POST.get('end_date')) is type(DateField):
                 e2e_test_params.end_date = request.POST.get('end_date')
             e2e_test_params.save()
-
+            
             # Save last to prevent data-loss in previous forms
             for form in e2e_test_action__formset:
                 form.save()
