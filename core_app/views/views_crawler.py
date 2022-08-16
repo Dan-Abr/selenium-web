@@ -72,8 +72,6 @@ class CreateE2ETestView(LoginRequiredMixin, View):
         if e2e_test_params__form.is_valid() and e2e_test_actions__formset.is_valid():
             # Will be used to connect between the Celery task, PeriodicTask and crawler actions
             e2e_test_params = e2e_test_params__form.save(commit=False)
-            # e2e_test_launches_in_minutes = (max(round(launches_per_day_scaled_to_microseconds), 1)/1000000)/60
-            # new_e2e_test_job.launches_per_day = 1440/e2e_test_launches_in_minutes
             
             # Formset of crawler actions
             e2e_test_actions = []
