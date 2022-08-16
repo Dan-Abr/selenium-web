@@ -18,8 +18,8 @@
         </div>  
     <hr />
     <div id="action-forms" class="row">
-        {{ e2e_test_action__formset.management_form }}
-        {% for form in e2e_test_action__formset %}
+        {{ e2e_test_actions__formset.management_form }}
+        {% for form in e2e_test_actions__formset %}
         <div id="form-{{ forloop.counter0 }}" class="action-form card" style="width: 18rem;margin:5px;">
             <div class="card-body">
                 <h4 class="action-title card-title">Action {{ forloop.counter }}</h4>

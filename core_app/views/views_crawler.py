@@ -40,11 +40,11 @@ class CreateE2ETestView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         e2e_test_params__form = E2ETestParamsForm(request.GET or None)
         # On page load, reset the number of added forms
-        e2e_test_action__formset = E2ETestActionFormsetCreate(queryset=E2ETestActionModel.objects.none())
+        e2e_test_actions__formset = E2ETestActionFormsetCreate(queryset=E2ETestActionModel.objects.none())
         
         context = {
             'e2e_test_params__form': e2e_test_params__form,
-            'e2e_test_action__formset': e2e_test_action__formset,
+            'e2e_test_actions__formset': e2e_test_actions__formset,
         }
         return render(request, CREATE_TEST_TEMPLATE, context)
 
@@ -66,10 +66,10 @@ class CreateE2ETestView(LoginRequiredMixin, View):
 
         # Create database-entry object
         e2e_test_params__form = E2ETestParamsForm(request.POST)
-        e2e_test_action__formset = E2ETestActionFormsetCreateValidation(request.POST)
+        e2e_test_actions__formset = E2ETestActionFormsetCreateValidation(request.POST)
 
         # POST the entry to database
-        if e2e_test_params__form.is_valid() and e2e_test_action__formset.is_valid():
+        if e2e_test_params__form.is_valid() and e2e_test_actions__formset.is_valid():
             # Will be used to connect between the Celery task, PeriodicTask and crawler actions
             e2e_test_params = e2e_test_params__form.save(commit=False)
             # e2e_test_launches_in_minutes = (max(round(launches_per_day_scaled_to_microseconds), 1)/1000000)/60
@@ -77,7 +77,7 @@ class CreateE2ETestView(LoginRequiredMixin, View):
             
             # Formset of crawler actions
             e2e_test_actions = []
-            for form in e2e_test_action__formset:
+            for form in e2e_test_actions__formset:
                 e2e_test_action = form.save(commit=False)
                 e2e_test_action.e2e_test_params = e2e_test_params
                 e2e_test_actions.append(e2e_test_action_form_to_dict(e2e_test_action))
@@ -112,13 +112,13 @@ class CreateE2ETestView(LoginRequiredMixin, View):
                                                  )
 
             # Save last to prevent data-loss in previous forms
-            for form in e2e_test_action__formset:
+            for form in e2e_test_actions__formset:
                 form.save()
 
             messages.success(request, 'Created successfully.')
             # Clear the forms after a successful creation
             e2e_test_params__form = E2ETestParamsForm(request.GET or None)
-            e2e_test_action__formset = E2ETestActionFormsetCreate(queryset=E2ETestActionModel.objects.none())
+            e2e_test_actions__formset = E2ETestActionFormsetCreate(queryset=E2ETestActionModel.objects.none())
         else:
             messages.error(request, 'Please fix the issues below.')
 
@@ -165,13 +165,13 @@ class EditE2ETestView(LoginRequiredMixin, View):
         # instance=e2e_test_params will load the requested e2e-test form
         # with pre-filled fields.
         e2e_test_params__form = E2ETestParamsForm(instance=e2e_test_params)
-        e2e_test_action__formset = E2ETestActionFormsetEditValidation(queryset=e2e_test_actions)
+        e2e_test_actions__formset = E2ETestActionFormsetEditValidation(queryset=e2e_test_actions)
 
         context = {
             'e2e_test_params': e2e_test_params,
             'e2e_test_params__form': e2e_test_params__form,
             'e2e_test_actions': e2e_test_actions,
-            'e2e_test_action__formset': e2e_test_action__formset,
+            'e2e_test_actions__formset': e2e_test_actions__formset,
 
         }
         return render(request, EDIT_TEST_TEMPLATE, context)
@@ -194,16 +194,16 @@ class EditE2ETestView(LoginRequiredMixin, View):
 
         # Create database-entry object
         e2e_test_params__form = E2ETestParamsForm(request.POST, instance=e2e_test_params) 
-        e2e_test_action__formset = E2ETestActionFormsetEditValidation(request.POST)
+        e2e_test_actions__formset = E2ETestActionFormsetEditValidation(request.POST)
 
         # POST the entry to database
-        if e2e_test_params__form.is_valid() and e2e_test_action__formset.is_valid():
+        if e2e_test_params__form.is_valid() and e2e_test_actions__formset.is_valid():
             # Will be used to connect between the Celery task, PeriodicTask and crawler actions
             e2e_test_params = e2e_test_params__form.save(commit=False)
 
             # Formset of crawler actions
             e2e_test_actions = []
-            for form in e2e_test_action__formset:
+            for form in e2e_test_actions__formset:
                 e2e_test_action = form.save(commit=False)
                 e2e_test_action.e2e_test_params = e2e_test_params
                 e2e_test_actions.append(e2e_test_action_form_to_dict(e2e_test_action))
@@ -228,12 +228,12 @@ class EditE2ETestView(LoginRequiredMixin, View):
             e2e_test_params.save()
             
             # Save last to prevent data-loss in previous forms
-            for form in e2e_test_action__formset:
+            for form in e2e_test_actions__formset:
                 form.save()
 
             # Delete forms based on user-choice
-            e2e_test_action__formset.save(commit=False)
-            for form in e2e_test_action__formset.deleted_objects:
+            e2e_test_actions__formset.save(commit=False)
+            for form in e2e_test_actions__formset.deleted_objects:
                 form.delete()
 
             messages.success(request, 'Updated successfully.')
@@ -243,12 +243,12 @@ class EditE2ETestView(LoginRequiredMixin, View):
         # Latest actions should be last
         e2e_test_actions = E2ETestActionModel.objects.filter(e2e_test_params=e2e_test_params).order_by('-created').reverse()
         e2e_test_params__form = E2ETestParamsForm(instance=e2e_test_params)
-        e2e_test_action__formset = E2ETestActionFormsetEditValidation(queryset=e2e_test_actions)
+        e2e_test_actions__formset = E2ETestActionFormsetEditValidation(queryset=e2e_test_actions)
         
         context = {
             'e2e_test_params': e2e_test_params,
             'e2e_test_params__form': e2e_test_params__form,
-            'e2e_test_action__formset': e2e_test_action__formset
+            'e2e_test_actions__formset': e2e_test_actions__formset
         }
 
         return render(request, EDIT_TEST_TEMPLATE, context)
