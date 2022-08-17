@@ -15,15 +15,15 @@ from .models import E2ETestResultsModel
 def crawl_website(user_pk, e2e_test_params_pk, url, tasks):
     # The user who requested the task
     user = User.objects.get(pk=user_pk)
-
+    
     # User settings
     user_options = webdriver.ChromeOptions()
     user_options.add_argument(' - incognito ')
-
+    
     # System Settings
     driver = webdriver.Chrome(executable_path='./chromedriver', chrome_options=user_options)
     page_title = None
-
+    
     # Open URL
     timeout = 30
     error_list = []
@@ -33,16 +33,16 @@ def crawl_website(user_pk, e2e_test_params_pk, url, tasks):
         page_title = driver.title
     except TimeoutException:
         error_list.append("Timeout.")
-
+    
     # Perform crawling tasks (wait, click)
     error_list = perform_actions(driver, tasks, error_list)
     
     # Quit
     driver.quit()
-
+    
     # Summarize results
     post_results_to_db(user, e2e_test_params_pk, page_title, url, error_list)
-
+    
 
 def perform_actions(driver, tasks, error_list):
     # Perform crawling tasks (wait, click)
@@ -50,9 +50,12 @@ def perform_actions(driver, tasks, error_list):
         # Each task has only one dict inside
         task = list(task.items())[0]
         # Python supports match-case from v3.1, however
-        # Microsoft VSCode isn't supporting its syntax yet.
+        # Microsoft VSCode isn't supporting its syntax at the time of submission.
         # Source: https://github.com/microsoft/vscode-python/issues/17745
-        if(task[0] == '1'):
+        if(task[1] is None):
+            # The user did not specify task's content
+            continue
+        elif(task[0] == '1'):
             # Wait action/event
             try:
                 time.sleep(task[1])
