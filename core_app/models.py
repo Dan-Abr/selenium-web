@@ -35,7 +35,8 @@ class E2ETestParamsModel(models.Model):
 
 class E2ETestActionModel(models.Model):
     e2e_test_params = models.ForeignKey(E2ETestParamsModel, on_delete=models.CASCADE)
-    event_type = models.IntegerField(choices=ACTION_TYPE, default=1)   
+    # default=0 for an empty event (do-nothing)
+    event_type = models.IntegerField(choices=ACTION_TYPE, default=0, blank=True, null=True)   
     wait_time_in_sec = models.IntegerField(blank=True, null=True, max_length=3)
     xpath_click = models.CharField(blank=True, null=True, max_length=1024)
 

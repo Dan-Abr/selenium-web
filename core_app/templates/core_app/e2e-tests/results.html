@@ -11,7 +11,10 @@
                 <th scope="col">URL</th>
                 <th scope="col">Page Title</th>
                 <th scope="col">Status</th>
-                {% comment %} <th scope="col">Error</th> {% endcomment %}
+                {% if debug %}
+                    {% comment %} Show system errors to admin in debug mode {% endcomment %}
+                    <th scope="col">Error</th>
+                {% endif %}
                 <th scope="col">Time</th>
             </tr>
         </thead>
@@ -31,7 +34,10 @@
                         <span class="badge alert-dark">Failed</span>
                     {% endif %}
                 </td>
-                {% comment %} <td><p>{{ result.error_list }}</p></td> {% endcomment %}
+                {% if debug %}
+                    {% comment %} Show system errors to admin in debug mode {% endcomment %}
+                    <td><p>{{ result.error_list }}</p></td>
+                {% endif %}
                 <td>{{ result.created }}</td>
             </tr>
             {% endfor %}
