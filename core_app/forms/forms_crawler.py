@@ -87,7 +87,7 @@ E2ETestActionFormsetEdit = modelformset_factory(
 
 
 class E2ETestActionFormsetCreateValidation(E2ETestActionFormsetCreate):
-    # Since formsets are allowed to be empty, when using required fields
+    # Since formsets are allowed to be empty, when using mandatory fields
     # a manual validation must be performed.
     def __init__(self, *args, **kwargs):
         super(E2ETestActionFormsetCreateValidation, self).__init__(*args, **kwargs)
@@ -99,7 +99,7 @@ class E2ETestActionFormsetCreateValidation(E2ETestActionFormsetCreate):
 
 
 class E2ETestActionFormsetEditValidation(E2ETestActionFormsetEdit):
-    # Since formsets are allowed to be empty, when using required fields
+    # Since formsets are allowed to be empty, when using mandatory fields
     # a manual validation must be performed.
     def __init__(self, *args, **kwargs):
         super(E2ETestActionFormsetEditValidation, self).__init__(*args, **kwargs)

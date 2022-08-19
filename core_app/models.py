@@ -35,7 +35,8 @@ class E2ETestParamsModel(models.Model):
 
 class E2ETestActionModel(models.Model):
     e2e_test_params = models.ForeignKey(E2ETestParamsModel, on_delete=models.CASCADE)
-    # default=0 for an empty event (do-nothing)
+    # default=0 for an empty event, enforcing the user to choose 
+    # an event type.
     event_type = models.IntegerField(choices=ACTION_TYPE, default=0, blank=True, null=True)   
     wait_time_in_sec = models.IntegerField(blank=True, null=True, max_length=3)
     xpath_click = models.CharField(blank=True, null=True, max_length=1024)
@@ -48,8 +49,8 @@ class E2ETestResultsModel(models.Model):
     page_title = models.CharField(max_length=200)
     status = models.CharField(max_length=10)
     error_list = models.CharField(blank=True, null=True, max_length=120)
-    # Not as foreign key since it might be deleted and it should not 
-    # affect the saved results.
+    # e2e_test_params_pk not as foreign key since it might be deleted
+    # and it should not affect the saved results.
     e2e_test_params_pk = models.IntegerField(max_length=12)
 
     user = models.ForeignKey(User, db_index=True, on_delete=models.CASCADE)

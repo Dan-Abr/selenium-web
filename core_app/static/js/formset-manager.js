@@ -1,5 +1,3 @@
-// Extension to - https://medium.com/all-about-django/adding-forms-dynamically-to-a-django-formset-375f1090c2b0
-
 // ---------------------------------------------------------------------------------
 // Clone & Delete Forms
 // ---------------------------------------------------------------------------------

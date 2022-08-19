@@ -107,7 +107,8 @@ class APITest(APITestCase):
         response.render()
         self.assertEqual(response.status_code, 404)
 
-        # The application can PUT an e2e-test, however the test below isn't passing.
+    # The application can PUT an e2e-test, however the test below isn't passing.
+    # I could not solve the problem, by the time of submission.
     # def test_E2ETestParamsID_edit_e2e_test(self):
     #     # Create a dummy e2e-tests.
     #     e2e_test_params = E2ETestParamsFactory.create(user=self.user_dummy_1)
