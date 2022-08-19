@@ -58,19 +58,21 @@ class E2ETestActionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = E2ETestActionModel
 
+    # Default to a wait event of 5 seconds.
     e2e_test_params = factory.SubFactory(E2ETestParamsModel)
-    # event_type = models.IntegerField(choices=ACTION_TYPE, default=1)
-    # wait_time_in_sec = models.IntegerField(blank=True, null=True, max_length=3)
-    # xpath_click = models.CharField(blank=True, null=True, max_length=1024)
+    event_type = 1
+    wait_time_in_sec = 5
+    xpath_click = None
 
 
 class E2ETestResultsFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = E2ETestResultsModel
 
+    # Default to a success result with no errors
     url = "https://google.com"
     page_title = "Google"
     status = "Success"
-    # error_list = models.CharField(blank=True, null=True, max_length=120)
+    error_list = []
     user = factory.SubFactory(UserFactory)
     e2e_test_params_pk = randint(0,100)

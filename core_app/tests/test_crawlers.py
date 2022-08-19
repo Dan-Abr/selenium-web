@@ -151,14 +151,29 @@ class TestCrawler(TestCase):
         # Assert
         self.assertTrue(len(errors) > 0)
 
-    def test_crawl_website_returns_no_errors_if_task_is_null(self):
-        # The task is being skipped because it is not a valid task.
+    def test_crawl_website_returns_no_errors_if_action_is_null(self):
+        # The action/event is being skipped because it is not a valid task.
         # Prevent raising an exception on the user-side.
         # Arrange
         user_pk = 1
         e2e_test_params_pk = 0
         url = 'https://www.google.com'
-        tasks = [{'1': None}]
+        tasks = [{'1': None}]  # action is None
+        # Act
+        crawl_website(user_pk, e2e_test_params_pk, url, tasks)
+        # No errors in the front-end.
+        errors = E2ETestResultsModel.objects.first()
+        field_object = E2ETestResultsModel._meta.get_field('error_list')
+        errors_value = getattr(errors, field_object.attname)
+        # Assert 
+        self.assertEqual(errors_value, None)
+
+    def test_crawl_website_wait_2_seconds_returns_no_errors(self):
+        # Arrange. Wait 2 seconds after loading the page.
+        user_pk = 1
+        e2e_test_params_pk = 0
+        url = 'https://www.google.com'
+        tasks = [{'1': 2}]
         # Act
         crawl_website(user_pk, e2e_test_params_pk, url, tasks)
         # No errors in the front-end.
