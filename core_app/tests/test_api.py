@@ -132,36 +132,31 @@ class APITest(APITestCase):
             periodic_task = None
         self.assertIsNone(periodic_task)
 
-    # The application can PUT an e2e-test, however the test below isn't passing.
-    # I could not solve the problem, by the time of submission.
-    # def test_E2ETestParamsID_edit_e2e_test(self):
-    #     # Create a dummy e2e-tests.
-    #     e2e_test_params = E2ETestParamsFactory.create(user=self.user_dummy_1)
-    #     # Edit e2e-test's parameters.
-    #     url = reverse('api-e2e-test-id', kwargs={'pk': e2e_test_params.pk})
-    #     data = {
-    #         'id': e2e_test_params.pk,
-    #         'url': e2e_test_params.url,
-    #         'launches_per_day': 200,  # Change from the random value to 200.
-    #         'start_date': e2e_test_params.start_date,
-    #         'end_date': "",
-    #         'enabled': e2e_test_params.enabled,
-    #         'created': e2e_test_params.created,
-    #         'updated': e2e_test_params.updated,
-    #         'periodic_task': e2e_test_params.periodic_task.pk,
-    #         'user': e2e_test_params.user.pk,
-    #     }
-    #     response = self.client.put(url, 
-    #                                json.dumps(data, sort_keys=True, default=str), 
-    #                                content_type='application/json'
-    #                                )
-    #     e2e_test_params.refresh_from_db()
-    #     response.render()
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(response.data['url'], data['url'])
-    #     self.assertEqual(response.data['launches_per_day'], data['launches_per_day'])
-    #     self.assertEqual(response.data['user'], data['user'])
-    #     self.assertEqual(response.data['start_date'], data['start_date'])
+    def test_E2ETestParamsID_edit_e2e_test(self):
+        # Create a dummy e2e-tests.
+        e2e_test_params = E2ETestParamsFactory.create(user=self.user_dummy_1)
+        # Edit e2e-test's parameters.
+        url = reverse('api-e2e-test-id', kwargs={'pk': e2e_test_params.pk})
+        data = {
+            'id': e2e_test_params.pk,
+            'url': e2e_test_params.url,
+            'launches_per_day': 200,  # Change from the random value to 200.
+            'start_date': e2e_test_params.start_date,
+            'end_date': "",
+            'enabled': e2e_test_params.enabled,
+            'created': e2e_test_params.created,
+            'updated': e2e_test_params.updated,
+            'periodic_task': e2e_test_params.periodic_task.pk,
+            'user': e2e_test_params.user.pk,
+        }
+        response = self.client.put(url, data)
+        e2e_test_params.refresh_from_db()
+        response.render()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['url'], data['url'])
+        self.assertEqual(response.data['launches_per_day'], data['launches_per_day'])
+        self.assertEqual(response.data['user'], data['user'])
+        self.assertEqual(response.data['start_date'], data['start_date'])
 
     def test_E2ETestResultsList_returns_success(self):
         # Create a dummy e2e-tests.
