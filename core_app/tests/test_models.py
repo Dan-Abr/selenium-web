@@ -48,7 +48,6 @@ class TestModels(TestCase):
                                                                user=self.user_dummy_1
                                                                )
 
-
     def tearDown(self):
         User.objects.all().delete()
         PeriodicTask.objects.all().delete()
@@ -56,7 +55,9 @@ class TestModels(TestCase):
         E2ETestResultsModel.objects.all().delete()
 
 
-    # ------------ Tests start here ------------
+    # -----------------------------------------------------
+    # Test models.
+    # -----------------------------------------------------
     def test_E2ETestParamsModel_successfully_added_entry_to_db(self):
         # Verify the E2ETestParams was added to the database
         e2e_test_params = E2ETestParamsModel.objects.get(pk=1)

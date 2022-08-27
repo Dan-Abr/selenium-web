@@ -30,7 +30,9 @@ class TestCrawlerTransaction(TransactionTestCase):
     def tearDown(self):
         User.objects.all().delete()
 
-
+    # -----------------------------------------------------
+    # Test crawlers.
+    # -----------------------------------------------------
     def test_crawl_website_launch_chrome_instance(self):
         # Arrange
         user_pk = 1
@@ -135,7 +137,10 @@ class TestCrawler(TestCase):
         User.objects.all().delete()
         E2ETestResultsModel.objects.all().delete()
 
-    
+
+    # -----------------------------------------------------
+    # Test crawlers.
+    # -----------------------------------------------------
     # Using TestCase instead of TransactionTestCase because the latter has
     # different mechanism to handle ORM database.
     # Resource: https://stackoverflow.com/questions/43978468/django-test-transactionmanagementerror-you-cant-execute-queries-until-the-end

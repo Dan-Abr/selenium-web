@@ -31,6 +31,9 @@ class SerializersTest(APITestCase):
         User.objects.all().delete()
 
 
+    # -----------------------------------------------------
+    # Test serializers.
+    # -----------------------------------------------------
     def test_E2ETestParamsSerializer_has_correct_data(self):
         # Create a dummy e2e-test object
         e2e_test_params_dummy = E2ETestParamsFactory.create()

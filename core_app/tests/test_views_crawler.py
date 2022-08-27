@@ -43,13 +43,13 @@ class TestAuthViews(TestCase):
         # Login to the application
         self.login_user_response = self.client.post(self.login_url, self.user_dummy_credentials_1, follow=True)
 
-
     def tearDown(self):
         User.objects.all().delete()
 
+
     # -----------------------------------------------------
     # Test crawler views.
-    # Below, I'm testing both factories and POST.
+    # Test both factories and POST.
     # -----------------------------------------------------
     def test_user_created_successfully(self):
         # Can fetch page

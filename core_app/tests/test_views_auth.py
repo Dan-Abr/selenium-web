@@ -39,9 +39,9 @@ class TestAuthViews(TestCase):
         # Login to the application
         self.login_user_response = self.client.post(self.login_url, self.user_dummy_credentials_1, follow=True)
 
-
     def tearDown(self):
         User.objects.all().delete()
+
 
     # -----------------------------------------------------
     # Test auth views

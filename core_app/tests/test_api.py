@@ -35,7 +35,10 @@ class APITest(APITestCase):
     def tearDown(self):
         User.objects.all().delete()
 
-    
+
+    # -----------------------------------------------------
+    # Test API.
+    # -----------------------------------------------------
     def test_E2ETestParamsList_returns_success(self):
         # Can access the user's e2e-tests via API endpoint?
         url = reverse('api-e2e-tests-list')

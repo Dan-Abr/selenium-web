@@ -26,6 +26,9 @@ class TestUserPasswordChangeForm(TransactionTestCase):
         User.objects.all().delete()
 
 
+    # -----------------------------------------------------
+    # Test forms (auth).
+    # -----------------------------------------------------
     def test_password_change_valid_form_returns_valid_response(self):
         # print("-------------DEBUG---------------")
         # print(self.form.errors)
@@ -57,6 +60,9 @@ class TestUserRegisterForm(TransactionTestCase):
         User.objects.all().delete()
 
 
+    # -----------------------------------------------------
+    # Test forms (auth).
+    # -----------------------------------------------------
     def test_register_valid_form_returns_valid_response(self):
         # print("-------------DEBUG---------------")
         # print(self.form.errors)
@@ -71,6 +77,9 @@ class TestUserRegisterForm(TransactionTestCase):
         self.assertEqual(form_saved.username, 'test_user1')
 
 
+# Using  TransactionTestCase instead of TestCase because of
+# different mechanism to handle ORM database.
+# https://stackoverflow.com/questions/21458387/transactionmanagementerror-you-cant-execute-queries-until-the-end-of-the-atom
 class TestUserLoginForm(TransactionTestCase):
     form = None
     user_dummy_credentials_1 = None
@@ -86,6 +95,9 @@ class TestUserLoginForm(TransactionTestCase):
         User.objects.all().delete()
 
 
+    # -----------------------------------------------------
+    # Test forms (auth).
+    # -----------------------------------------------------
     def test_login_valid_form_returns_valid_response(self):
         # print("-------------DEBUG---------------")
         # print(self.form.errors)

@@ -43,6 +43,9 @@ class TestE2ETestParamsForm(TransactionTestCase):
         User.objects.all().delete()
         
 
+    # -----------------------------------------------------
+    # Test forms (crawler).
+    # -----------------------------------------------------
     def test_createE2ETest_valid_form_returns_valid_response(self):
         # print("---------------------------------")
         # print(self.form.errors)
@@ -61,7 +64,8 @@ class TestE2ETestParamsForm(TransactionTestCase):
 
 
 
-# Using TransactionTestCase instead of TestCase:
+# Using  TransactionTestCase instead of TestCase because of
+# different mechanism to handle ORM database.
 # https://stackoverflow.com/questions/21458387/transactionmanagementerror-you-cant-execute-queries-until-the-end-of-the-atom
 class TestE2ETestActionForm(TransactionTestCase):
     formset = None
@@ -112,13 +116,15 @@ class TestE2ETestActionForm(TransactionTestCase):
 
         self.formset = E2ETestActionFormsetCreate(formset_data)
 
-
     def tearDown(self):
         E2ETestActionModel.objects.all().delete()
         PeriodicTask.objects.all().delete()
         User.objects.all().delete()
 
 
+    # -----------------------------------------------------
+    # Test forms (crawler).
+    # -----------------------------------------------------
     def test_createE2ETest_valid_form_returns_valid_response(self):
         # print("---------------------------------")
         # print(self.form.errors)
