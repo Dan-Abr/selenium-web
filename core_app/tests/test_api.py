@@ -3,6 +3,7 @@ import json
 
 # third-party
 from rest_framework.test import APITestCase
+from django_celery_beat.models import PeriodicTask
 
 # Django
 from django.urls import reverse
@@ -101,11 +102,35 @@ class APITest(APITestCase):
         response = self.client.delete(url)
         response.render()
         self.assertEqual(response.status_code, 204)
-        # Verify e2e-test is deleted.
+        # Verify e2e-test has been deleted.
         url = reverse('api-e2e-test-id', kwargs={'pk': e2e_test_params.pk})
         response = self.client.get(url)
         response.render()
         self.assertEqual(response.status_code, 404)
+
+    def test_E2ETestParamsID_delete_e2e_test_deletes_PeriodicTask(self):
+        # Create a dummy e2e-tests.
+        e2e_test_params = E2ETestParamsFactory.create(user=self.user_dummy_1)
+        periodic_task = e2e_test_params.periodic_task
+        # Create a dummy e2e-test result.
+        e2e_test_result = E2ETestResultsFactory.create(user=self.user_dummy_1)
+        # Delete e2e-test result via API endpoint.
+        url = reverse('api-e2e-test-id', kwargs={'pk': e2e_test_params.pk})
+        response = self.client.delete(url)
+        response.render()
+        self.assertEqual(response.status_code, 204)
+        # Verify e2e-test result has been deleted.
+        response = self.client.get(url)
+        response.render()
+        self.assertEqual(response.status_code, 404)
+        # Verify its PeriodicTask has been deleted (cascading).
+        try:
+            # Object should be deleted
+            periodic_task = PeriodicTask.objects.get(pk=periodic_task.pk)
+        except:
+            # Should be None
+            periodic_task = None
+        self.assertIsNone(periodic_task)
 
     # The application can PUT an e2e-test, however the test below isn't passing.
     # I could not solve the problem, by the time of submission.

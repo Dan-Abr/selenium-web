@@ -1,6 +1,8 @@
 # third-party
 from rest_framework import generics
 from rest_framework import mixins
+from rest_framework.response import Response
+from rest_framework import status
 
 # local Django
 from .models import *
@@ -54,7 +56,12 @@ class E2ETestParamsID(mixins.CreateModelMixin,
         return self.update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+        # Delete the PeriodicTask which is related to the end-to-end test.
+        end_to_end_test = self.get_object()
+        periodic_task = PeriodicTask.objects.get(pk=end_to_end_test.periodic_task.pk)
+        periodic_task.delete()
+        end_to_end_test.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class E2ETestResultsList(mixins.ListModelMixin,
