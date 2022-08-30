@@ -57,13 +57,12 @@ class APITest(APITestCase):
     def test_E2ETestParamsList_returns_list_of_e2e_tests(self):
         # Create a dummy e2e-tests.
         E2ETestParamsFactory.create(user=self.user_dummy_1)
-        E2ETestParamsFactory.create(user=self.user_dummy_1)
         # API endpoint has two e2e-test.
         url = reverse('api-e2e-tests-list')
         response = self.client.get(url)
         response.render()
         self.assertEqual(response.status_code, 200)
-        self.assertGreater(len(response.data), 1)
+        self.assertGreater(len(response.data), 0)
     
     def test_E2ETestParamsID_returns_success(self):
         # Create a dummy e2e-tests.
